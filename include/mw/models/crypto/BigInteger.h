@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/util/BitUtil.h>
 #include <mw/util/HexUtil.h>
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
@@ -36,9 +37,7 @@ public:
     //
     // Destructor
     //
-    virtual ~BigInt() = default;
-
-    void erase()
+    virtual ~BigInt()
     {
         for (size_t i = 0; i < NUM_BYTES; i++)
         {
@@ -61,6 +60,7 @@ public:
 
     static BigInt<NUM_BYTES, ALLOC> FromHex(const std::string& hex)
     {
+        assert(hex.length() == NUM_BYTES * 2);
         std::vector<uint8_t> bytes = HexUtil::FromHex(hex);
         assert(bytes.size() == NUM_BYTES);
         return BigInt<NUM_BYTES, ALLOC>(std::move(bytes));
@@ -107,17 +107,13 @@ public:
             return false;
         }
 
-        auto rhsIter = rhs.m_bytes.cbegin();
-        for (auto iter = this->m_bytes.cbegin(); iter != this->m_bytes.cend(); iter++)
+        assert(m_bytes.size() == NUM_BYTES && rhs.m_bytes.size() == NUM_BYTES);
+        for (size_t i = 0; i < NUM_BYTES; i++)
         {
-            assert(rhsIter != rhs.m_bytes.cend());
-
-            if (*rhsIter != *iter)
+            if (m_bytes[i] != rhs.m_bytes[i])
             {
-                return *iter < *rhsIter;
+                return m_bytes[i] < rhs.m_bytes[i];
             }
-
-            rhsIter++;
         }
 
         return false;

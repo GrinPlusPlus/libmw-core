@@ -37,7 +37,7 @@ public:
     // Getters
     //
     const BigInt<32>& GetBigInt() const { return m_value; }
-    const std::vector<uint8_t>& GetVec() const { return m_value.vec(); }
+    const std::vector<uint8_t>& vec() const { return m_value.vec(); }
     const uint8_t* data() const { return m_value.data(); }
 
     //

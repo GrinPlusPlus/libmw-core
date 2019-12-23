@@ -16,24 +16,15 @@
 class ByteBuffer
 {
 public:
-    ByteBuffer(const std::vector<uint8_t>& bytes)
-        : m_index(0), m_bytes(bytes)
-    {
-
-    }
-
-    ByteBuffer(std::vector<uint8_t>&& bytes)
-        : m_index(0), m_bytes(std::move(bytes))
-    {
-
-    }
+    ByteBuffer(const std::vector<uint8_t>& bytes) : m_index(0), m_bytes(bytes) { }
+    ByteBuffer(std::vector<uint8_t>&& bytes) : m_index(0), m_bytes(std::move(bytes)) { }
 
     template<class T>
     void ReadBigEndian(T& t)
     {
         if (m_index + sizeof(T) > m_bytes.size())
         {
-            throw DeserializationEx();
+            throw DeserializationEx("Attempted to read past end of ByteBuffer.");
         }
 
         if (EndianUtil::IsBigEndian())
@@ -56,7 +47,7 @@ public:
     {
         if (m_index + sizeof(T) > m_bytes.size())
         {
-            throw DeserializationEx();
+            throw DeserializationEx("Attempted to read past end of ByteBuffer.");
         }
 
         if (EndianUtil::IsBigEndian())
@@ -156,7 +147,7 @@ public:
 
         if (m_index + stringLength > m_bytes.size())
         {
-            throw DeserializationEx();
+            throw DeserializationEx("Attempted to read past end of ByteBuffer.");
         }
 
         std::vector<uint8_t> temp(m_bytes.cbegin() + m_index, m_bytes.cbegin() + m_index + stringLength);
@@ -169,7 +160,7 @@ public:
     {
         if (m_index + numBytes > m_bytes.size())
         {
-            throw DeserializationEx();
+            throw DeserializationEx("Attempted to read past end of ByteBuffer.");
         }
 
         const size_t index = m_index;

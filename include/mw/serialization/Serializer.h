@@ -60,12 +60,6 @@ public:
         return *this;
     }
 
-    //Serializer& AppendByteVector(const SecureVector& vectorToAppend)
-    //{
-    //    m_serialized.insert(m_serialized.end(), vectorToAppend.cbegin(), vectorToAppend.cend());
-    //    return *this;
-    //}
-
     Serializer& AppendVarStr(const std::string& varString)
     {
         size_t stringLength = varString.length();
@@ -74,10 +68,13 @@ public:
         return *this;
     }
 
-    const std::vector<uint8_t>& GetBytes() const { return m_serialized; }
-
+    const std::vector<uint8_t>& vec() const { return m_serialized; }
     const uint8_t* data() const { return m_serialized.data(); }
     size_t size() const { return m_serialized.size(); }
+
+    uint8_t& operator[] (const size_t x) { return m_serialized[x]; }
+    const uint8_t& operator[] (const size_t x) const { return m_serialized[x]; }
+
 
     // WARNING: This will destroy the contents of m_serialized.
     // TODO: Create a SecureSerializer instead.

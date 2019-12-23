@@ -50,7 +50,7 @@ public:
             .AppendByteVector(m_bytes);]
     }
 
-    static RangeProof Deserrialize(ByteBuffer& byteBuffer)
+    static RangeProof Deserialize(ByteBuffer& byteBuffer)
     {
         const uint64_t proofSize = byteBuffer.ReadU64();
         if (proofSize > MAX_SIZE)

@@ -20,7 +20,7 @@ public:
     //
     // Destructor
     //
-    virtual ~secret_key_t() { m_value.erase(); }
+    virtual ~secret_key_t() = default;
 
     //
     // Getters
