@@ -1,0 +1,82 @@
+cmake_minimum_required(VERSION 3.8)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
+
+#SET(CMAKE_BUILD_TYPE RelWithDebInfo) 
+
+if(UNIX AND NOT APPLE)
+	set(LINUX TRUE)
+endif()
+
+project(LIBMW-CORE)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+    
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4100") # unreferenced formal parameter
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4324") # '__blake2b_state': structure was padded due to alignment specifier
+
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2")
+
+	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /INCREMENTAL:NO")
+	SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /OPT:REF /INCREMENTAL:NO")
+	SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} /OPT:REF /INCREMENTAL:NO")
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wno-deprecated-copy -Wno-pessimizing-move")
+	SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -static-libstdc++ -static-libgcc")
+endif()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(WITH_GFLAGS OFF)
+add_definitions(-DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+add_definitions(-DNOMINMAX)
+add_definitions(-DASIO_STANDALONE)
+add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
+
+include_directories(
+	${PROJECT_SOURCE_DIR}/include
+	${PROJECT_SOURCE_DIR}/deps
+	${PROJECT_SOURCE_DIR}/deps/mio/include
+	${PROJECT_SOURCE_DIR}/deps/stduuid/include
+	${PROJECT_SOURCE_DIR}/deps/asio/asio/include
+	${PROJECT_SOURCE_DIR}/deps/ghc
+	${PROJECT_SOURCE_DIR}/deps/rocksdb/include
+	${PROJECT_SOURCE_DIR}/deps/fmt/include
+	${PROJECT_SOURCE_DIR}/deps/jsoncpp
+	${PROJECT_SOURCE_DIR}/deps/zlib
+	${PROJECT_SOURCE_DIR}/deps/Catch2
+	${PROJECT_SOURCE_DIR}/deps/ed25519-donna
+	${PROJECT_SOURCE_DIR}/deps/cppcodec
+	${CMAKE_CURRENT_BINARY_DIR}/deps/zlib
+)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+
+# Dependencies
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+add_subdirectory(deps)
+
+add_definitions(-DUNICODE)
+#include(fmtlib)
+add_definitions(-DSPDLOG_WCHAR_FILENAMES)
+add_definitions(-DGRINPP_STATIC)
+
+if (MSVC)
+	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		string(REGEX REPLACE "/W[0-4]" "/W4 /WX" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
+	 endif()
+endif (MSVC)
+
+option(GRINPP_TESTS "Build tests" true)
+if(GRINPP_TESTS AND NOT LINUX)
+	add_subdirectory(tests)
+endif(GRINPP_TESTS AND NOT LINUX)
