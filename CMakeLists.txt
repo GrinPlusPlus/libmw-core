@@ -30,43 +30,20 @@ else ()
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
 set(WITH_GFLAGS OFF)
-add_definitions(-DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
-add_definitions(-DNOMINMAX)
-add_definitions(-DASIO_STANDALONE)
-add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
-include_directories(
-	${PROJECT_SOURCE_DIR}/include
-	${PROJECT_SOURCE_DIR}/deps
-	${PROJECT_SOURCE_DIR}/deps/mio/include
-	${PROJECT_SOURCE_DIR}/deps/stduuid/include
-	${PROJECT_SOURCE_DIR}/deps/asio/asio/include
-	${PROJECT_SOURCE_DIR}/deps/ghc
-	${PROJECT_SOURCE_DIR}/deps/rocksdb/include
-	${PROJECT_SOURCE_DIR}/deps/fmt/include
-	${PROJECT_SOURCE_DIR}/deps/jsoncpp
-	${PROJECT_SOURCE_DIR}/deps/zlib
-	${PROJECT_SOURCE_DIR}/deps/Catch2
-	${PROJECT_SOURCE_DIR}/deps/ed25519-donna
-	${PROJECT_SOURCE_DIR}/deps/cppcodec
-	${CMAKE_CURRENT_BINARY_DIR}/deps/zlib
-)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # Dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-add_subdirectory(deps)
+include(deps/dependencies.cmake)
 
 add_definitions(-DUNICODE)
-#include(fmtlib)
-add_definitions(-DSPDLOG_WCHAR_FILENAMES)
-add_definitions(-DGRINPP_STATIC)
+add_definitions(-DNOMINMAX)
+add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
 if (MSVC)
 	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")

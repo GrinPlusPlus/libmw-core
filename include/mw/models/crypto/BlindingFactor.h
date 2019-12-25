@@ -53,6 +53,9 @@ public:
         return BlindingFactor(BigInt<32>::Deserialize(byteBuffer));
     }
 
+    std::string ToHex() const { return m_value.ToHex(); }
+    static BlindingFactor FromHex(const std::string& hex) { return BlindingFactor(BigInt<32>::FromHex(hex)); }
+
     //
     // Converts BlindingFactor to SecretKey.
     // WARNING: BlindingFactor is unusable after calling this.

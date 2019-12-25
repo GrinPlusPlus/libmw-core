@@ -12,13 +12,13 @@
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
 #include <mw/traits/Hashable.h>
+#include <mw/serialization/Json.h>
 
-#include <json/json.h>
 #include <memory>
 #include <vector>
 
 ////////////////////////////////////////
-// TRANSACTION
+// TRANSACTION - Represents a transaction or merged transactions before they've been included in a block.
 ////////////////////////////////////////
 class Transaction : public Traits::IPrintable, public Traits::ISerializable, public Traits::IHashable
 {
@@ -67,10 +67,39 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final;
-    static Transaction Deserialize(ByteBuffer& byteBuffer);
-    Json::Value ToJSON() const;
-    static Transaction FromJSON(const Json::Value& transactionJSON);
+    virtual Serializer& Serialize(Serializer& serializer) const override final
+    {
+        m_offset.Serialize(serializer);
+        m_body.Serialize(serializer);
+        return serializer;
+    }
+
+    static Transaction Deserialize(ByteBuffer& byteBuffer)
+    {
+        // Read BlindingFactor/Offset (32 bytes)
+        BlindingFactor offset = BlindingFactor::Deserialize(byteBuffer);
+
+        // Read Transaction Body (variable size)
+        TransactionBody transactionBody = TransactionBody::Deserialize(byteBuffer);
+
+        return Transaction(std::move(offset), std::move(transactionBody));
+    }
+
+    json ToJSON() const
+    {
+        return json({
+            {"offset", m_offset.ToHex()},
+            {"body", m_body.ToJSON()}
+        });
+    }
+
+    static Transaction FromJSON(const json& json)
+    {
+        return Transaction(
+            BlindingFactor::FromHex(json["offset"].get<std::string>()),
+            TransactionBody::FromJSON(json["body"].get())
+        );
+    }
 
     //
     // Traits
