@@ -14,6 +14,7 @@ public:
     //
     // Constructors
     //
+    BlindingFactor() = default;
     BlindingFactor(BigInt<32>&& value) : m_value(std::move(value)) { }
     BlindingFactor(const BigInt<32>& value) : m_value(value) { }
     BlindingFactor(const BlindingFactor& other) = default;
@@ -39,6 +40,8 @@ public:
     const BigInt<32>& GetBigInt() const { return m_value; }
     const std::vector<uint8_t>& vec() const { return m_value.vec(); }
     const uint8_t* data() const { return m_value.data(); }
+    uint8_t* data() { return m_value.data(); }
+    size_t size() const { return m_value.size(); }
 
     //
     // Serialization/Deserialization

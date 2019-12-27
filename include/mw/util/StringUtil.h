@@ -5,9 +5,9 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <mw/traits/Printable.h>
+#include <mw/common/filesystem.h>
 
 #include <fmt/format.h>
-#include <ghc/filesystem.h>
 #include <memory>
 #include <iostream>
 #include <string>

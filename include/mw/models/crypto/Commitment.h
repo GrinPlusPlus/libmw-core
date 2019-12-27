@@ -7,21 +7,25 @@
 #include <mw/models/crypto/BigInteger.h>
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
+#include <mw/traits/Jsonable.h>
 #include <mw/util/BitUtil.h>
 
 #include <cassert>
 
-class Commitment : public Traits::IPrintable, public Traits::ISerializable
+class Commitment :
+    public Traits::IPrintable,
+    public Traits::ISerializable,
+    public Traits::IJsonable
 {
 public:
-    using SIZE = 33;
+    static constexpr size_t const& SIZE = 33;
 
     //
     // Constructors
     //
     Commitment() = default;
     Commitment(BigInt<SIZE>&& bytes) : m_bytes(std::move(bytes)) { assert(m_bytes.size() == SIZE); }
-    Commitment(const BigInt<33>& bytes) : m_bytes(bytes) { }
+    Commitment(const BigInt<SIZE>& bytes) : m_bytes(bytes) { }
     Commitment(const Commitment& other) = default;
     Commitment(Commitment&& other) noexcept = default;
 
@@ -45,6 +49,8 @@ public:
     const BigInt<SIZE>& GetBigInt() const { return m_bytes; }
     const std::vector<uint8_t>& GetVec() const { return m_bytes.vec(); }
     const uint8_t* data() const { return m_bytes.data(); }
+    uint8_t* data() { return m_bytes.data(); }
+    size_t size() const { return m_bytes.size(); }
 
     //
     // Serialization/Deserialization
@@ -56,8 +62,21 @@ public:
 
     static Commitment Deserialize(ByteBuffer& byteBuffer)
     {
-        return Commitment(BigInt<32>::Deserialize(SIZE));
+        return Commitment(BigInt<SIZE>::Deserialize(byteBuffer));
     }
+
+    virtual json ToJSON() const override final
+    {
+        return json(m_bytes.ToHex());
+    }
+
+    static Commitment FromJSON(const json& json)
+    {
+        return Commitment::FromHex(json.get<std::string>());
+    }
+
+    std::string ToHex() const { return m_bytes.ToHex(); }
+    static Commitment FromHex(const std::string& hex) { return Commitment(BigInt<SIZE>::FromHex(hex)); }
 
     //
     // Traits
@@ -65,7 +84,6 @@ public:
     virtual std::string Format() const override final { return m_bytes.Format(); }
 
 private:
-    // The BigInt representation of the Commitment
     BigInt<SIZE> m_bytes;
 };
 

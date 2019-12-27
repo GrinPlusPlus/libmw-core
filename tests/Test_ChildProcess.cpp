@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include <mw/ChildProcess.h>
+#include <mw/common/ChildProcess.h>
 
 TEST_CASE("ChildProcess Test")
 {

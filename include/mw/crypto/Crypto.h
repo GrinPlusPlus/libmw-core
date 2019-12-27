@@ -4,8 +4,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <Common/ImportExport.h>
-#include <Common/Secure.h>
+#include <mw/common/ImportExport.h>
+#include <mw/common/Secure.h>
 #include <mw/models/crypto/BigInteger.h>
 #include <mw/models/crypto/Commitment.h>
 #include <mw/models/crypto/RangeProof.h>
@@ -17,9 +17,6 @@
 #include <mw/models/crypto/PublicKey.h>
 #include <mw/models/crypto/SecretKey.h>
 #include <mw/models/crypto/ScryptParameters.h>
-
-#include <memory>
-#include <vector>
 
 #ifdef MW_CRYPTO
 #define CRYPTO_API EXPORT
@@ -194,7 +191,7 @@ public:
     // Hashes the message and signs it using the secret key.
     // If successful, returns a compact Signature.
     //
-    static std::unique_ptr<CompactSignature> SignMessage(
+    static CompactSignature::UPtr SignMessage(
         const SecretKey& secretKey,
         const PublicKey& publicKey,
         const std::string& message
@@ -214,7 +211,7 @@ public:
     // Builds one party's share of a Schnorr signature.
     // Returns a CompactSignature if successful.
     //
-    static std::unique_ptr<CompactSignature> CalculatePartialSignature(
+    static CompactSignature::UPtr CalculatePartialSignature(
         const SecretKey& secretKey,
         const SecretKey& secretNonce,
         const PublicKey& sumPubKeys,
@@ -238,7 +235,7 @@ public:
     // Combines multiple partial signatures to build the final aggregate signature.
     // Returns the raw aggregate signature.
     //
-    static std::unique_ptr<Signature> AggregateSignatures(
+    static Signature::UPtr AggregateSignatures(
         const std::vector<CompactSignature>& signatures,
         const PublicKey& sumPubNonces
     );

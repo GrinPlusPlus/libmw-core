@@ -8,11 +8,11 @@
 #include <mw/models/crypto/Hash.h>
 #include <mw/models/crypto/BigInteger.h>
 #include <mw/models/crypto/BlindingFactor.h>
-#include <mw/models/TransactionBody.h>
+#include <mw/models/tx/TransactionBody.h>
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
 #include <mw/traits/Hashable.h>
-#include <mw/serialization/Json.h>
+#include <mw/traits/Jsonable.h>
 
 #include <memory>
 #include <vector>
@@ -20,7 +20,11 @@
 ////////////////////////////////////////
 // TRANSACTION - Represents a transaction or merged transactions before they've been included in a block.
 ////////////////////////////////////////
-class Transaction : public Traits::IPrintable, public Traits::ISerializable, public Traits::IHashable
+class Transaction :
+    public Traits::IPrintable,
+    public Traits::ISerializable,
+    public Traits::IHashable,
+    public Traits::IJsonable
 {
 public:
     using CPtr = std::shared_ptr<const Transaction>;
@@ -34,7 +38,7 @@ public:
         Serializer serializer;
         Serialize(serializer);
 
-        m_hash = Crypto::Blake2b(serializer.GetBytes());
+        m_hash = Crypto::Blake2b(serializer.vec());
     }
 
     Transaction(const Transaction& transaction) = default;
@@ -76,16 +80,12 @@ public:
 
     static Transaction Deserialize(ByteBuffer& byteBuffer)
     {
-        // Read BlindingFactor/Offset (32 bytes)
         BlindingFactor offset = BlindingFactor::Deserialize(byteBuffer);
-
-        // Read Transaction Body (variable size)
         TransactionBody transactionBody = TransactionBody::Deserialize(byteBuffer);
-
         return Transaction(std::move(offset), std::move(transactionBody));
     }
 
-    json ToJSON() const
+    virtual json ToJSON() const override final
     {
         return json({
             {"offset", m_offset.ToHex()},
@@ -97,7 +97,7 @@ public:
     {
         return Transaction(
             BlindingFactor::FromHex(json["offset"].get<std::string>()),
-            TransactionBody::FromJSON(json["body"].get())
+            json["body"].get<TransactionBody>()//TransactionBody::FromJSON(json["body"].get())
         );
     }
 

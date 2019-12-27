@@ -37,7 +37,7 @@ public:
 
     std::vector<uint32_t> ToKeyIndices(const EBulletProofType& bulletproofType) const
     {
-        ByteBuffer byteBuffer(m_proofMessageBytes.GetData());
+        ByteBuffer byteBuffer(m_bytes.vec());
 
         size_t length = 3;
         if (bulletproofType == EBulletProofType::ENHANCED)

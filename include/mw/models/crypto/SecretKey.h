@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/common/Secure.h>
 #include <mw/models/crypto/BigInteger.h>
 #include <mw/traits/Serializable.h>
 
@@ -14,7 +15,9 @@ public:
     //
     // Constructor
     //
+    secret_key_t() = default;
     secret_key_t(BigInt<NUM_BYTES>&& value) : m_value(std::move(value)) { }
+    secret_key_t(const SecureVector& bytes) : m_value(BigInt<NUM_BYTES>(bytes.data())) { }
     secret_key_t(std::vector<uint8_t>&& bytes) : m_value(BigInt<NUM_BYTES>(std::move(bytes))) { }
 
     //
@@ -27,6 +30,7 @@ public:
     //
     const BigInt<NUM_BYTES>& GetBigInt() const { return m_value; }
     const std::vector<uint8_t>& vec() const { return m_value.vec(); }
+    uint8_t* data() { return m_value.data(); }
     const uint8_t* data() const { return m_value.data(); }
     size_t size() const { return m_value.size(); }
 

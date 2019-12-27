@@ -10,11 +10,14 @@
 class Signature : public Traits::ISerializable
 {
 public:
-    using SIZE = 64;
+    using UPtr = std::unique_ptr<const Signature>;
+    static constexpr size_t const& SIZE = 64;
 
     //
     // Constructors
     //
+    Signature() = default;
+    Signature(const uint8_t* data) : m_bytes(data) { }
     Signature(BigInt<SIZE>&& bytes) : m_bytes(std::move(bytes)) { }
     Signature(const Signature& other) = default;
     Signature(Signature&& other) noexcept = default;
@@ -34,13 +37,15 @@ public:
     // Getters
     //
     const BigInt<SIZE>& GetBigInt() const { return m_bytes; }
+    const uint8_t* data() const { return m_bytes.data(); }
+    uint8_t* data() { return m_bytes.data(); }
 
     //
     // Serialization/Deserialization
     //
-    void Serialize(Serializer& serializer) const
+    virtual Serializer& Serialize(Serializer& serializer) const override final
     {
-        m_bytes.Serialize(serializer);
+        return m_bytes.Serialize(serializer);
     }
 
     static Signature Deserialize(ByteBuffer& byteBuffer)
@@ -58,6 +63,9 @@ private:
 class CompactSignature : public Signature
 {
 public:
+    using UPtr = std::unique_ptr<const CompactSignature>;
+
+    CompactSignature() = default;
     CompactSignature(BigInt<SIZE>&& bytes) : Signature(std::move(bytes)) { }
 
     virtual ~CompactSignature() = default;

@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
-#include <mw/models/BlockHeader.h>
+#include <mw/models/Block/Header.h>
 
-TEST_CASE("BlockHeader")
+TEST_CASE("Header")
 {
 	const uint16_t version = 1;
 	const uint64_t height = 2;

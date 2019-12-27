@@ -4,28 +4,31 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <mw/models/BlockHeader.h>
+#include <mw/models/block/Header.h>
 #include <mw/models/ShortId.h>
-#include <mw/models/TransactionOutput.h>
-#include <mw/models/TransactionKernel.h>
+#include <mw/models/tx/Output.h>
+#include <mw/models/tx/Kernel.h>
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
 #include <mw/traits/Hashable.h>
 
-class CompactBlock : public Traits::IPrintable, public Traits::ISerializable, public Traits::IHashable
+class CompactBlock :
+    public Traits::IPrintable,
+    public Traits::ISerializable,
+    public Traits::IHashable
 {
 public:
     //
     // Constructors
     //
     CompactBlock(
-        IBlockHeader::CPtr pBlockHeader,
+        IHeader::CPtr pHeader,
         const uint64_t nonce,
-        std::vector<TransactionOutput>&& fullOutputs,
-        std::vector<TransactionKernel>&& fullKernels,
+        std::vector<Output>&& fullOutputs,
+        std::vector<Kernel>&& fullKernels,
         std::vector<ShortId>&& shortIds
     )
-        : m_pBlockHeader(pBlockHeader),
+        : m_pHeader(pHeader),
         m_nonce(nonce),
         m_outputs(std::move(fullOutputs)),
         m_kernels(std::move(fullKernels)),
@@ -51,23 +54,22 @@ public:
     //
     // Getters
     //
-    const IBlockHeader::CPtr& GetBlockHeader() const { return m_pBlockHeader; }
+    const IHeader::CPtr& GetHeader() const { return m_pHeader; }
     uint64_t GetNonce() const { return m_nonce; }
 
-    const std::vector<TransactionOutput>& GetOutputs() const { return m_outputs; }
-    const std::vector<TransactionKernel>& GetKernels() const { return m_kernels; }
+    const std::vector<Output>& GetOutputs() const { return m_outputs; }
+    const std::vector<Kernel>& GetKernels() const { return m_kernels; }
     const std::vector<ShortId>& GetShortIds() const { return m_shortIds; }
 
-    const Hash& GetPreviousHash() const { return m_pBlockHeader->GetPreviousBlockHash(); }
-    uint64_t GetHeight() const { return m_pBlockHeader->GetHeight(); }
-    uint64_t GetTotalDifficulty() const { return m_pBlockHeader->GetTotalDifficulty(); }
+    const Hash& GetPreviousHash() const { return m_pHeader->GetPreviousHash(); }
+    uint64_t GetHeight() const { return m_pHeader->GetHeight(); }
 
     //
     // Serialization/Deserialization
     //
     Serializer& Serialize(Serializer& serializer) const
     {
-        m_pBlockHeader->Serialize(serializer);
+        m_pHeader->Serialize(serializer);
         serializer
             .Append<uint64_t>(m_nonce)
             .Append<uint64_t>(m_outputs.size())
@@ -81,18 +83,21 @@ public:
         return serializer;
     }
 
-    static CompactBlock Deserialize(ByteBuffer& byteBuffer);
+    static CompactBlock Deserialize(ByteBuffer& byteBuffer)
+    {
+        // TODO: Implement
+    }
 
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_pBlockHeader->Format(); }
-    virtual Hash GetHash() const override final { return m_pBlockHeader->GetHash(); }
+    virtual std::string Format() const override final { return m_pHeader->Format(); }
+    virtual Hash GetHash() const override final { return m_pHeader->GetHash(); }
 
 private:
-    IBlockHeader::CPtr m_pBlockHeader;
+    IHeader::CPtr m_pHeader;
     uint64_t m_nonce;
-    std::vector<TransactionOutput> m_outputs;
-    std::vector<TransactionKernel> m_kernels;
+    std::vector<Output> m_outputs;
+    std::vector<Kernel> m_kernels;
     std::vector<ShortId> m_shortIds;
 };

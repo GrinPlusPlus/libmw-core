@@ -39,7 +39,7 @@ public:
     //
     virtual ~BigInt()
     {
-        for (size_t i = 0; i < NUM_BYTES; i++)
+        for (size_t i = 0; i < m_bytes.size(); i++)
         {
             m_bytes[i] = 0;
         }

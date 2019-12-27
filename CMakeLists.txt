@@ -45,6 +45,9 @@ add_definitions(-DUNICODE)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
+add_subdirectory(src/common)
+add_subdirectory(src/crypto)
+
 if (MSVC)
 	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
 		string(REGEX REPLACE "/W[0-4]" "/W4 /WX" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

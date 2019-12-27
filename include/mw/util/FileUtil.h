@@ -1,12 +1,12 @@
 #pragma once
 
 #include <mw/util/StringUtil.h>
+#include <mw/common/filesystem.h>
 
 #include <string>
 #include <fstream>
 #include <vector>
-#include <filesystem.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN

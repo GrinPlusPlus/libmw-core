@@ -16,15 +16,18 @@
 // Forward Declarations
 class NodeContext;
 
-class IBlockHeader : public Traits::IPrintable, public Traits::ISerializable, public Traits::IHashable
+class IHeader :
+    public Traits::IPrintable,
+    public Traits::ISerializable,
+    public Traits::IHashable
 {
 public:
-    using CPtr = std::shared_ptr<const IBlockHeader>;
+    using CPtr = std::shared_ptr<const IHeader>;
 
     //
     // Constructors
     //
-    IBlockHeader(
+    IHeader(
         const uint16_t version,
         const uint64_t height,
         Hash&& previousHash,
@@ -53,12 +56,12 @@ public:
     //
     // Destructor
     //
-    virtual ~IBlockHeader() = default;
+    virtual ~IHeader() = default;
 
     //
     // Operators
     //
-    bool operator!=(const IBlockHeader& rhs) const { return this->GetHash() != rhs.GetHash(); }
+    bool operator!=(const IHeader& rhs) const { return this->GetHash() != rhs.GetHash(); }
 
     //
     // Getters
