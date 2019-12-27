@@ -10,6 +10,7 @@
 #include <Crypto/aes.h>
 #include <Crypto/siphash.h>
 #include <Crypto/crypto_scrypt.h>
+#include <cassert>
 
 // Secp256k1
 #include "Context.h"
@@ -24,82 +25,86 @@
 
 Locked<Context> SECP256K1_CONTEXT(std::make_shared<Context>());
 
-BigInt<32> Crypto::Blake2b(const std::vector<unsigned char>& input)
+BigInt<32> Crypto::Blake2b(const std::vector<uint8_t>& input)
 {
-    std::vector<unsigned char> tmp(32, 0);
-
-    blake2b(&tmp[0], 32, &input[0], input.size(), nullptr, 0);
-
-    return BigInt<32>(&tmp[0]);
+    BigInt<32> result;
+    blake2b(result.data(), 32, input.data(), input.size(), nullptr, 0);
+    return result;
 }
 
-BigInt<32> Crypto::Blake2b(const std::vector<unsigned char>& key, const std::vector<unsigned char>& input)
+BigInt<32> Crypto::Blake2b(
+    const std::vector<uint8_t>& key,
+    const std::vector<uint8_t>& input)
 {
-    std::vector<unsigned char> tmp(32, 0);
-
-    blake2b(&tmp[0], 32, input.data(), input.size(), key.data(), key.size());
-
-    return BigInt<32>(&tmp[0]);
+    BigInt<32> result;
+    blake2b(result.data(), 32, input.data(), input.size(), key.data(), key.size());
+    return result;
 }
 
-BigInt<32> Crypto::SHA256(const std::vector<unsigned char>& input)
+BigInt<32> Crypto::SHA256(const std::vector<uint8_t>& input)
 {
-    std::vector<unsigned char> sha256(32, 0);
-
-    CSHA256().Write(input.data(), input.size()).Finalize(sha256.data());
-
-    return BigInt<32>(sha256);
+    BigInt<32> result;
+    CSHA256()
+        .Write(input.data(), input.size())
+        .Finalize(result.data());
+    return result;
 }
 
-BigInt<64> Crypto::SHA512(const std::vector<unsigned char>& input)
+BigInt<64> Crypto::SHA512(const std::vector<uint8_t>& input)
 {
-    std::vector<unsigned char> sha512(64, 0);
-
-    CSHA512().Write(input.data(), input.size()).Finalize(sha512.data());
-
-    return BigInt<64>(sha512);
+    BigInt<64> result;
+    CSHA512()
+        .Write(input.data(), input.size())
+        .Finalize(result.data());
+    return result;
 }
 
-BigInt<20> Crypto::RipeMD160(const std::vector<unsigned char>& input)
+BigInt<20> Crypto::RipeMD160(const std::vector<uint8_t>& input)
 {
-    std::vector<unsigned char> ripemd(32, 0);
-
-    CRIPEMD160().Write(input.data(), input.size()).Finalize(ripemd.data());
-
-    return BigInt<20>(ripemd);
+    BigInt<20> result;
+    CRIPEMD160()
+        .Write(input.data(), input.size())
+        .Finalize(result.data());
+    return result;
 }
 
-BigInt<32> Crypto::HMAC_SHA256(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data)
+BigInt<32> Crypto::HMAC_SHA256(
+    const std::vector<uint8_t>& key,
+    const std::vector<uint8_t>& data)
 {
-    std::vector<unsigned char> result(32);
-
-    CHMAC_SHA256(key.data(), key.size()).Write(data.data(), data.size()).Finalize(result.data());
-
-    return BigInt<32>(result.data());
+    BigInt<32> result;
+    CHMAC_SHA256(key.data(), key.size())
+        .Write(data.data(), data.size())
+        .Finalize(result.data());
+    return result;
 }
 
-BigInt<64> Crypto::HMAC_SHA512(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data)
+BigInt<64> Crypto::HMAC_SHA512(
+    const std::vector<uint8_t>& key,
+    const std::vector<uint8_t>& data)
 {
-    std::vector<unsigned char> result(64);
-
-    CHMAC_SHA512(key.data(), key.size()).Write(data.data(), data.size()).Finalize(result.data());
-
-    return BigInt<64>(std::move(result));
+    BigInt<64> result;
+    CHMAC_SHA512(key.data(), key.size())
+        .Write(data.data(), data.size())
+        .Finalize(result.data());
+    return result;
 }
 
 Commitment Crypto::CommitTransparent(const uint64_t value)
 {
-    const BlindingFactor blindingFactor(BigInt<32>::ValueOf(0));
-
-    return Pedersen(SECP256K1_CONTEXT).PedersenCommit(value, blindingFactor);
+    return Pedersen(SECP256K1_CONTEXT).PedersenCommit(value, BigInt<32>::ValueOf(0));
 }
 
-Commitment Crypto::CommitBlinded(const uint64_t value, const BlindingFactor& blindingFactor)
+Commitment Crypto::CommitBlinded(
+    const uint64_t value,
+    const BlindingFactor& blindingFactor)
 {
     return Pedersen(SECP256K1_CONTEXT).PedersenCommit(value, blindingFactor);
 }
 
-Commitment Crypto::AddCommitments(const std::vector<Commitment>& positive, const std::vector<Commitment>& negative)
+Commitment Crypto::AddCommitments(
+    const std::vector<Commitment>& positive,
+    const std::vector<Commitment>& negative)
 {
     const Commitment zeroCommitment(BigInt<33>::ValueOf(0));
 
@@ -108,7 +113,9 @@ Commitment Crypto::AddCommitments(const std::vector<Commitment>& positive, const
         positive.cbegin(),
         positive.cend(),
         std::back_inserter(sanitizedPositive),
-        [&zeroCommitment](const Commitment& positiveCommitment) { return positiveCommitment != zeroCommitment; }
+        [&zeroCommitment](const auto& positiveCommitment) {
+            return positiveCommitment != zeroCommitment;
+        }
     );
 
     std::vector<Commitment> sanitizedNegative;
@@ -116,13 +123,20 @@ Commitment Crypto::AddCommitments(const std::vector<Commitment>& positive, const
         negative.cbegin(),
         negative.cend(),
         std::back_inserter(sanitizedNegative),
-        [&zeroCommitment](const Commitment& negativeCommitment) { return negativeCommitment != zeroCommitment; }
+        [&zeroCommitment](const auto& negativeCommitment) {
+            return negativeCommitment != zeroCommitment;
+        }
     );
 
-    return Pedersen(SECP256K1_CONTEXT).PedersenCommitSum(sanitizedPositive, sanitizedNegative);
+    return Pedersen(SECP256K1_CONTEXT).PedersenCommitSum(
+        sanitizedPositive,
+        sanitizedNegative
+    );
 }
 
-BlindingFactor Crypto::AddBlindingFactors(const std::vector<BlindingFactor>& positive, const std::vector<BlindingFactor>& negative)
+BlindingFactor Crypto::AddBlindingFactors(
+    const std::vector<BlindingFactor>& positive,
+    const std::vector<BlindingFactor>& negative)
 {
     BlindingFactor zeroBlindingFactor(ZERO_HASH);
 
@@ -131,7 +145,9 @@ BlindingFactor Crypto::AddBlindingFactors(const std::vector<BlindingFactor>& pos
         positive.cbegin(),
         positive.cend(),
         std::back_inserter(sanitizedPositive),
-        [&zeroBlindingFactor](const BlindingFactor& positiveBlind) { return positiveBlind != zeroBlindingFactor; }
+        [&zeroBlindingFactor](const auto& positiveBlind) {
+            return positiveBlind != zeroBlindingFactor;
+        }
     );
 
     std::vector<BlindingFactor> sanitizedNegative;
@@ -139,7 +155,9 @@ BlindingFactor Crypto::AddBlindingFactors(const std::vector<BlindingFactor>& pos
         negative.cbegin(),
         negative.cend(),
         std::back_inserter(sanitizedNegative),
-        [&zeroBlindingFactor](const BlindingFactor& negativeBlind) { return negativeBlind != zeroBlindingFactor; }
+        [&zeroBlindingFactor](const auto& negativeBlind) {
+            return negativeBlind != zeroBlindingFactor;
+        }
     );
 
     if (sanitizedPositive.empty() && sanitizedNegative.empty())
@@ -161,7 +179,7 @@ SecretKey Crypto::AddPrivateKeys(const SecretKey& secretKey1, const SecretKey& s
 
     const int tweakResult = secp256k1_ec_privkey_tweak_add(
         SECP256K1_CONTEXT.Read()->Get(),
-        (unsigned char*)result.data(),
+        (uint8_t*)result.data(),
         secretKey2.data()
     );
     if (tweakResult == 1)
@@ -172,37 +190,60 @@ SecretKey Crypto::AddPrivateKeys(const SecretKey& secretKey1, const SecretKey& s
     throw CryptoEx("secp256k1_ec_privkey_tweak_add failed");
 }
 
-RangeProof Crypto::GenerateRangeProof(const uint64_t amount, const SecretKey& key, const SecretKey& privateNonce, const SecretKey& rewindNonce, const ProofMessage& proofMessage)
+RangeProof Crypto::GenerateRangeProof(
+    const uint64_t amount,
+    const SecretKey& key,
+    const SecretKey& privateNonce,
+    const SecretKey& rewindNonce,
+    const ProofMessage& proofMessage)
 {
-    return Bulletproofs(SECP256K1_CONTEXT).GenerateRangeProof(amount, key, privateNonce, rewindNonce, proofMessage);
+    return Bulletproofs(SECP256K1_CONTEXT).GenerateRangeProof(
+        amount,
+        key,
+        privateNonce,
+        rewindNonce,
+        proofMessage
+    );
 }
 
-std::unique_ptr<RewoundProof> Crypto::RewindRangeProof(const Commitment& commitment, const RangeProof& rangeProof, const SecretKey& nonce)
+std::unique_ptr<RewoundProof> Crypto::RewindRangeProof(
+    const Commitment& commitment,
+    const RangeProof& rangeProof,
+    const SecretKey& nonce)
 {
     return Bulletproofs(SECP256K1_CONTEXT).RewindProof(commitment, rangeProof, nonce);
 }
 
-bool Crypto::VerifyRangeProofs(const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs)
+bool Crypto::VerifyRangeProofs(
+    const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs)
 {
     return Bulletproofs(SECP256K1_CONTEXT).VerifyBulletproofs(rangeProofs);
 }
 
-uint64_t Crypto::SipHash24(const uint64_t k0, const uint64_t k1, const std::vector<unsigned char>& data)
+uint64_t Crypto::SipHash24(
+    const uint64_t k0,
+    const uint64_t k1,
+    const std::vector<uint8_t>& data)
 {
-    const std::vector<uint64_t>& key = { k0, k1 };
+    const std::vector<uint64_t> key = { k0, k1 };
 
-    return siphash24(&key[0], &data[0], data.size());
+    return siphash24(key.data(), data.data(), data.size());
 }
 
-std::vector<unsigned char> Crypto::AES256_Encrypt(const SecureVector& input, const SecretKey& key, const BigInt<16>& iv)
+std::vector<uint8_t> Crypto::AES256_Encrypt(
+    const SecureVector& input,
+    const SecretKey& key,
+    const BigInt<16>& iv)
 {
-    std::vector<unsigned char> ciphertext;
+    assert(input.size() <= INT_MAX);
+
+    std::vector<uint8_t> ciphertext;
 
     // max ciphertext len for a n bytes of plaintext is n + AES_BLOCKSIZE bytes
     ciphertext.resize(input.size() + AES_BLOCKSIZE);
 
     AES256CBCEncrypt enc(key.data(), iv.data(), true);
-    const size_t nLen = enc.Encrypt(&input[0], (int)input.size(), ciphertext.data());
+    const size_t nLen = enc.Encrypt(input.data(), (int)input.size(), ciphertext.data());
     if (nLen < input.size())
     {
         throw CryptoEx("Failed to encrypt");
@@ -213,17 +254,18 @@ std::vector<unsigned char> Crypto::AES256_Encrypt(const SecureVector& input, con
     return ciphertext;
 }
 
-SecureVector Crypto::AES256_Decrypt(const std::vector<unsigned char>& ciphertext, const SecretKey& key, const BigInt<16>& iv)
+SecureVector Crypto::AES256_Decrypt(
+    const std::vector<uint8_t>& ciphertext,
+    const SecretKey& key,
+    const BigInt<16>& iv)
 {
-    SecureVector plaintext;
+    assert(ciphertext.size() <= INT_MAX);
 
     // plaintext will always be equal to or lesser than length of ciphertext
-    size_t nLen = ciphertext.size();
-
-    plaintext.resize(nLen);
+    SecureVector plaintext(ciphertext.size());
 
     AES256CBCDecrypt dec(key.data(), iv.data(), true);
-    nLen = dec.Decrypt(ciphertext.data(), (int)ciphertext.size(), plaintext.data());
+    size_t nLen = dec.Decrypt(ciphertext.data(), (int)ciphertext.size(), plaintext.data());
     if (nLen == 0)
     {
         throw CryptoEx("Failed to decrypt");
@@ -234,11 +276,14 @@ SecureVector Crypto::AES256_Decrypt(const std::vector<unsigned char>& ciphertext
     return plaintext;
 }
 
-SecretKey Crypto::PBKDF(const SecureString& password, const std::vector<unsigned char>& salt, const ScryptParameters& parameters)
+SecretKey Crypto::PBKDF(
+    const SecureString& password,
+    const std::vector<uint8_t>& salt,
+    const ScryptParameters& parameters)
 {
     SecureVector buffer(64);
     const int result = crypto_scrypt(
-        (const unsigned char*)password.data(),
+        (const uint8_t*)password.data(),
         password.size(),
         salt.data(),
         salt.size(),
@@ -250,11 +295,9 @@ SecretKey Crypto::PBKDF(const SecureString& password, const std::vector<unsigned
     );
     if (result == 0)
     {
-        std::vector<unsigned char> tmp(32, 0);
-
-        blake2b(&tmp[0], 32, &buffer[0], buffer.size(), nullptr, 0);
-
-        return SecretKey(BigInt<32>(&tmp[0]));
+        SecretKey result;
+        blake2b(result.data(), 32, buffer.data(), buffer.size(), nullptr, 0);
+        return result;
     }
 
     throw CryptoEx("Scrypt failed");
@@ -270,41 +313,97 @@ PublicKey Crypto::AddPublicKeys(const std::vector<PublicKey>& publicKeys)
     return PublicKeys(SECP256K1_CONTEXT).PublicKeySum(publicKeys);
 }
 
-CompactSignature::UPtr Crypto::SignMessage(const SecretKey& secretKey, const PublicKey& publicKey, const std::string& message)
+CompactSignature::UPtr Crypto::SignMessage(
+    const SecretKey& secretKey,
+    const PublicKey& publicKey,
+    const std::string& message)
 {
-    const Hash messageHash = Crypto::Blake2b(std::vector<unsigned char>(message.cbegin(), message.cend()));
-    return AggSig(SECP256K1_CONTEXT).SignMessage(secretKey, publicKey, messageHash);
+    const Hash messageHash = Crypto::Blake2b(
+        std::vector<uint8_t>(message.cbegin(), message.cend())
+    );
+    return AggSig(SECP256K1_CONTEXT).SignMessage(
+        secretKey,
+        publicKey,
+        messageHash
+    );
 }
 
-bool Crypto::VerifyMessageSignature(const CompactSignature& signature, const PublicKey& publicKey, const std::string& message)
+bool Crypto::VerifyMessageSignature(
+    const CompactSignature& signature,
+    const PublicKey& publicKey,
+    const std::string& message)
 {
-    const Hash messageHash = Crypto::Blake2b(std::vector<unsigned char>(message.cbegin(), message.cend()));
-    return AggSig(SECP256K1_CONTEXT).VerifyMessageSignature(signature, publicKey, messageHash);
+    const Hash messageHash = Crypto::Blake2b(
+        std::vector<uint8_t>(message.cbegin(), message.cend())
+    );
+    return AggSig(SECP256K1_CONTEXT).VerifyMessageSignature(
+        signature,
+        publicKey,
+        messageHash
+    );
 }
 
-CompactSignature::UPtr Crypto::CalculatePartialSignature(const SecretKey& secretKey, const SecretKey& secretNonce, const PublicKey& sumPubKeys, const PublicKey& sumPubNonces, const Hash& message)
+CompactSignature::UPtr Crypto::CalculatePartialSignature(
+    const SecretKey& secretKey,
+    const SecretKey& secretNonce,
+    const PublicKey& sumPubKeys,
+    const PublicKey& sumPubNonces,
+    const Hash& message)
 {
-    return AggSig(SECP256K1_CONTEXT).CalculatePartialSignature(secretKey, secretNonce, sumPubKeys, sumPubNonces, message);
+    return AggSig(SECP256K1_CONTEXT).CalculatePartialSignature(
+        secretKey,
+        secretNonce,
+        sumPubKeys,
+        sumPubNonces,
+        message
+    );
 }
 
-Signature::UPtr Crypto::AggregateSignatures(const std::vector<CompactSignature>& signatures, const PublicKey& sumPubNonces)
+Signature::UPtr Crypto::AggregateSignatures(
+    const std::vector<CompactSignature>& signatures,
+    const PublicKey& sumPubNonces)
 {
     return AggSig(SECP256K1_CONTEXT).AggregateSignatures(signatures, sumPubNonces);
 }
 
-bool Crypto::VerifyPartialSignature(const CompactSignature& partialSignature, const PublicKey& publicKey, const PublicKey& sumPubKeys, const PublicKey& sumPubNonces, const Hash& message)
+bool Crypto::VerifyPartialSignature(
+    const CompactSignature& partialSignature,
+    const PublicKey& publicKey,
+    const PublicKey& sumPubKeys,
+    const PublicKey& sumPubNonces,
+    const Hash& message)
 {
-    return AggSig(SECP256K1_CONTEXT).VerifyPartialSignature(partialSignature, publicKey, sumPubKeys, sumPubNonces, message);
+    return AggSig(SECP256K1_CONTEXT).VerifyPartialSignature(
+        partialSignature,
+        publicKey,
+        sumPubKeys,
+        sumPubNonces,
+        message
+    );
 }
 
-bool Crypto::VerifyAggregateSignature(const Signature& aggregateSignature, const PublicKey sumPubKeys, const Hash& message)
+bool Crypto::VerifyAggregateSignature(
+    const Signature& aggregateSignature,
+    const PublicKey sumPubKeys,
+    const Hash& message)
 {
-    return AggSig(SECP256K1_CONTEXT).VerifyAggregateSignature(aggregateSignature, sumPubKeys, message);
+    return AggSig(SECP256K1_CONTEXT).VerifyAggregateSignature(
+        aggregateSignature,
+        sumPubKeys,
+        message
+    );
 }
 
-bool Crypto::VerifyKernelSignatures(const std::vector<const Signature*>& signatures, const std::vector<const Commitment*>& publicKeys, const std::vector<const Hash*>& messages)
+bool Crypto::VerifyKernelSignatures(
+    const std::vector<const Signature*>& signatures,
+    const std::vector<const Commitment*>& publicKeys,
+    const std::vector<const Hash*>& messages)
 {
-    return AggSig(SECP256K1_CONTEXT).VerifyAggregateSignatures(signatures, publicKeys, messages);
+    return AggSig(SECP256K1_CONTEXT).VerifyAggregateSignatures(
+        signatures,
+        publicKeys,
+        messages
+    );
 }
 
 SecretKey Crypto::GenerateSecureNonce()

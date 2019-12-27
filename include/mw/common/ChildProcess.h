@@ -29,6 +29,8 @@ public:
         reproc::options options;
         options.stop_actions = stop_actions;
 
+        options.redirect = { reproc::redirect::inherit, reproc::redirect::inherit, reproc::redirect::inherit };
+
         std::error_code ec = pChildProcess->m_process.start(args, options);
 
         if (ec == std::errc::no_such_file_or_directory) {
@@ -51,8 +53,10 @@ public:
         m_process.stop(stop_actions);
     }
 
+    bool IsRunning() const { return m_process.running(); }
+
 private:
     ChildProcess() = default;
 
-    reproc::process m_process;
+    mutable reproc::process m_process;
 };
