@@ -100,7 +100,7 @@ public:
         return changeEndianness64(val);
     }
 
-    static uint32_t ReadBE32(const unsigned char* ptr)
+    static uint32_t ReadBE32(const uint8_t* ptr)
     {
         uint32_t x;
         memcpy((char*)&x, ptr, 4);
@@ -108,7 +108,7 @@ public:
         return GetBigEndian32(x);
     }
 
-    static uint64_t ReadBE64(const unsigned char* ptr)
+    static uint64_t ReadBE64(const uint8_t* ptr)
     {
         uint64_t x;
         memcpy((char*)&x, ptr, 8);
@@ -116,19 +116,19 @@ public:
         return GetBigEndian64(x);
     }
 
-    static void WriteBE32(unsigned char* ptr, uint32_t x)
+    static void WriteBE32(uint8_t* ptr, uint32_t x)
     {
         uint32_t v = GetBigEndian32(x);
         memcpy(ptr, (char*)&v, 4);
     }
 
-    static void WriteBE64(unsigned char* ptr, uint64_t x)
+    static void WriteBE64(uint8_t* ptr, uint64_t x)
     {
         uint64_t v = GetBigEndian64(x);
         memcpy(ptr, (char*)&v, 8);
     }
 
-    static uint32_t ReadLE32(const unsigned char* ptr)
+    static uint32_t ReadLE32(const uint8_t* ptr)
     {
         uint32_t x;
         memcpy((char*)&x, ptr, 4);
@@ -136,13 +136,13 @@ public:
         return GetLittleEndian32(x);
     }
 
-    static void WriteLE32(unsigned char* ptr, uint32_t x)
+    static void WriteLE32(uint8_t* ptr, uint32_t x)
     {
         uint32_t v = GetLittleEndian32(x);
         memcpy(ptr, (char*)&v, 4);
     }
 
-    static void WriteLE64(unsigned char* ptr, uint64_t x)
+    static void WriteLE64(uint8_t* ptr, uint64_t x)
     {
         uint64_t v = GetLittleEndian64(x);
         memcpy(ptr, (char*)&v, 8);

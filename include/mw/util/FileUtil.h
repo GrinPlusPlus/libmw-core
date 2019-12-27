@@ -23,7 +23,7 @@ public:
         return fs::path(StringUtil::ToWide(pathStr));
     }
 
-    static bool ReadFile(const fs::path& filePath, std::vector<unsigned char>& data)
+    static bool ReadFile(const fs::path& filePath, std::vector<uint8_t>& data)
     {
         if (!fs::exists(filePath))
         {
@@ -46,7 +46,7 @@ public:
         return true;
     }
 
-    static bool ReadFile(const std::string& filePath, std::vector<unsigned char>& data)
+    static bool ReadFile(const std::string& filePath, std::vector<uint8_t>& data)
     {
         return ReadFile(ToPath(filePath), data);
     }
@@ -66,7 +66,7 @@ public:
         return !error;
     }
 
-    static bool SafeWriteToFile(const std::string& filePath, const std::vector<unsigned char>& data)
+    static bool SafeWriteToFile(const std::string& filePath, const std::vector<uint8_t>& data)
     {
         const std::string tmpFilePath = filePath + ".tmp";
         std::ofstream file(StringUtil::ToWide(tmpFilePath).c_str(), std::ios::out | std::ios::binary | std::ios::ate);

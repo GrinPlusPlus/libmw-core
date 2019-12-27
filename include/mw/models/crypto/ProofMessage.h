@@ -20,11 +20,11 @@ public:
             serializer.Append(keyIndex);
         }
 
-        std::vector<unsigned char> paddedPath(20, 0);
+        BigInt<20> paddedPath = BigInt<20>::ValueOf(0);
         if (bulletproofType == EBulletProofType::ENHANCED)
         {
             paddedPath[2] = 1;
-            paddedPath[3] = (unsigned char)keyIndices.size();
+            paddedPath[3] = (uint8_t)keyIndices.size();
         }
 
         for (size_t i = 0; i < serializer.size(); i++)
@@ -32,7 +32,7 @@ public:
             paddedPath[i + 4] = serializer[i];
         }
 
-        return ProofMessage(BigInt<20>(std::move(paddedPath)));
+        return ProofMessage(std::move(paddedPath));
     }
 
     std::vector<uint32_t> ToKeyIndices(const EBulletProofType& bulletproofType) const
@@ -71,7 +71,7 @@ public:
     }
 
     const BigInt<20>& GetBytes() const { return m_bytes; }
-    const unsigned char* data() const { return m_bytes.data(); }
+    const uint8_t* data() const { return m_bytes.data(); }
 
 private:
     BigInt<20> m_bytes;
