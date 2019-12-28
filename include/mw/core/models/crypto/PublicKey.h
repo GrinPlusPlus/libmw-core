@@ -1,7 +1,7 @@
 #pragma once
 
-#include<mw/core/models/crypto/BigInteger.h>
-#include<mw/core/traits/Serializable.h>
+#include <mw/core/models/crypto/BigInteger.h>
+#include <mw/core/traits/Serializable.h>
 
 class PublicKey : public Traits::ISerializable
 {

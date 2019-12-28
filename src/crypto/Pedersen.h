@@ -2,9 +2,9 @@
 
 #include "Context.h"
 
-#include<mw/core/models/crypto/BlindingFactor.h>
-#include<mw/core/models/crypto/SecretKey.h>
-#include<mw/core/models/crypto/Commitment.h>
+#include <mw/core/models/crypto/BlindingFactor.h>
+#include <mw/core/models/crypto/SecretKey.h>
+#include <mw/core/models/crypto/Commitment.h>
 
 class Pedersen
 {

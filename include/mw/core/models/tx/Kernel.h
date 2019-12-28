@@ -4,13 +4,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/crypto/Crypto.h>
-#include<mw/core/traits/Committed.h>
-#include<mw/core/traits/Hashable.h>
-#include<mw/core/traits/Serializable.h>
-#include<mw/core/traits/Jsonable.h>
-#include<mw/core/models/tx/Features.h>
-#include<mw/core/models/crypto/Signature.h>
+#include <mw/core/crypto/Crypto.h>
+#include <mw/core/traits/Committed.h>
+#include <mw/core/traits/Hashable.h>
+#include <mw/core/traits/Serializable.h>
+#include <mw/core/traits/Jsonable.h>
+#include <mw/core/models/tx/Features.h>
+#include <mw/core/models/crypto/Signature.h>
 
 ////////////////////////////////////////
 // TRANSACTION KERNEL
@@ -33,6 +33,7 @@ public:
         Signature&& excessSignature
     )
         : m_features(features),
+        m_fee(fee),
         m_lockHeight(lockHeight),
         m_excessCommitment(std::move(excessCommitment)),
         m_excessSignature(std::move(excessSignature))
@@ -96,7 +97,7 @@ public:
         return serializer;
     }
 
-    static Kernel Deserialize(ByteBuffer& byteBuffer)
+    static Kernel Deserialize(ByteBuffer&)
     {
         // TODO: Implement
         return Kernel();
@@ -108,7 +109,7 @@ public:
         return json();
     }
 
-    static Kernel FromJSON(const json& json)
+    static Kernel FromJSON(const json&)
     {
         // TODO: Implement
         return Kernel();

@@ -4,8 +4,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/traits/Batchable.h>
-#include<mw/core/exceptions/UnimplementedException.h>
+#include <mw/core/traits/Batchable.h>
+#include <mw/core/exceptions/UnimplementedException.h>
 #include <memory>
 #include <shared_mutex>
 

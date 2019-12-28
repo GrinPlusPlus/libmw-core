@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include<mw/core/models/net/IPAddress.h>
+#include <mw/core/models/net/IPAddress.h>
 
 TEST_CASE("IPAddress")
 {

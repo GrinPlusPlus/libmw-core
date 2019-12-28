@@ -1,6 +1,6 @@
 #pragma once
 
-#include<mw/core/exceptions/ProcessException.h>
+#include <mw/core/exceptions/ProcessException.h>
 #include <reproc++/reproc.hpp>
 
 #include <cassert>

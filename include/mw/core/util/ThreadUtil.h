@@ -4,7 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/util/TimeUtil.h>
+#include <mw/core/util/TimeUtil.h>
 
 #include <chrono>
 #include <atomic>

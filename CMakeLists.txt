@@ -1,32 +1,15 @@
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 
-#SET(CMAKE_BUILD_TYPE RelWithDebInfo) 
-
-if(UNIX AND NOT APPLE)
-	set(LINUX TRUE)
-endif()
-
 project(LIBMW-CORE)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+include(cmake/SetOutputDir.cmake)
+include(cmake/SetOptimizations.cmake)
+include(cmake/SetCpp17.cmake)
 
-if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
-    
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4100") # unreferenced formal parameter
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4324") # '__blake2b_state': structure was padded due to alignment specifier
-
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2")
-
-	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /INCREMENTAL:NO")
-	SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /OPT:REF /INCREMENTAL:NO")
-	SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} /OPT:REF /INCREMENTAL:NO")
-else ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wno-deprecated-copy -Wno-pessimizing-move")
-	SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -static-libstdc++ -static-libgcc")
+if(NOT MSVC) # TODO: This is for GCC. Need to determine clang flags
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-copy -Wno-pessimizing-move")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -34,27 +17,24 @@ set(WITH_GFLAGS OFF)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-include(cmake/SetOutputDir.cmake)
-
 # Dependencies
 include(deps/dependencies.cmake)
 
 add_definitions(-DUNICODE)
 add_definitions(-DNOMINMAX)
-add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
 add_subdirectory(src/common)
 add_subdirectory(src/crypto)
 
 if (MSVC)
-	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-		string(REGEX REPLACE "/W[0-4]" "/W4 /WX" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
-	 endif()
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W4 /WX" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
+     endif()
 endif (MSVC)
 
 option(GRINPP_TESTS "Build tests" true)
-if(GRINPP_TESTS AND NOT LINUX)
-	add_subdirectory(tests)
-endif(GRINPP_TESTS AND NOT LINUX)
+if(GRINPP_TESTS)
+    add_subdirectory(tests)
+endif(GRINPP_TESTS)

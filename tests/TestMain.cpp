@@ -1,5 +1,5 @@
-#include<mw/core/common/ChildProcess.h>
-#include<mw/core/util/FileUtil.h>
+#include <mw/core/common/ChildProcess.h>
+#include <mw/core/util/FileUtil.h>
 #include <thread>
 
 void RunTest(const std::string& tests)
@@ -22,7 +22,7 @@ void RunTest(const std::string& tests)
 	}
 }
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
 	RunTest("Crypto");
 	RunTest("Models");

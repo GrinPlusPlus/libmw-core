@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <ios>
 #include <iomanip>
-#include<mw/core/util/EndianUtil.h>
+#include <mw/core/util/EndianUtil.h>
 
 class HexUtil
 {

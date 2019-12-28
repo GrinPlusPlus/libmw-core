@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include<mw/core/models/Block/Header.h>
+#include <mw/core/models/Block/Header.h>
 
 TEST_CASE("Header")
 {

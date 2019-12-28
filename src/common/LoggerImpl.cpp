@@ -1,7 +1,7 @@
 #include "LoggerImpl.h"
 #include "ThreadManagerImpl.h"
 
-#include<mw/core/util/FileUtil.h>
+#include <mw/core/util/FileUtil.h>
 
 Logger& Logger::GetInstance()
 {

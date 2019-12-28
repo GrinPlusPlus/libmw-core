@@ -1,6 +1,6 @@
 #pragma once
 
-#include<mw/core/traits/Jsonable.h>
+#include <mw/core/traits/Jsonable.h>
 #include <cstdint>
 
 class ScryptParameters : public Traits::IJsonable

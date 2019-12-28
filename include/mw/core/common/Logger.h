@@ -1,7 +1,7 @@
 #pragma once
 
-#include<mw/core/common/ImportExport.h>
-#include<mw/core/util/StringUtil.h>
+#include <mw/core/common/ImportExport.h>
+#include <mw/core/util/StringUtil.h>
 
 #ifdef MW_COMMON
 #define LOGGER_API EXPORT

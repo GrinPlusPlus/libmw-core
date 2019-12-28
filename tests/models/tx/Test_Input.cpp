@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include<mw/core/models/tx/Input.h>
+#include <mw/core/models/tx/Input.h>
 
 TEST_CASE("Input")
 {

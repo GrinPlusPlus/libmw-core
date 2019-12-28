@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include<mw/core/models/crypto/BigInteger.h>
+#include <mw/core/models/crypto/BigInteger.h>
 
 TEST_CASE("BigInt")
 {

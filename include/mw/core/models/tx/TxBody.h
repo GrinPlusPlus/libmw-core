@@ -4,12 +4,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/models/crypto/BigInteger.h>
-#include<mw/core/traits/Serializable.h>
-#include<mw/core/traits/Jsonable.h>
-#include<mw/core/models/tx/Input.h>
-#include<mw/core/models/tx/Output.h>
-#include<mw/core/models/tx/Kernel.h>
+#include <mw/core/models/crypto/BigInteger.h>
+#include <mw/core/traits/Serializable.h>
+#include <mw/core/traits/Jsonable.h>
+#include <mw/core/models/tx/Input.h>
+#include <mw/core/models/tx/Output.h>
+#include <mw/core/models/tx/Kernel.h>
 
 #include <memory>
 #include <vector>
@@ -71,7 +71,7 @@ public:
         return serializer;
     }
 
-    static TxBody Deserialize(ByteBuffer& byteBuffer)
+    static TxBody Deserialize(ByteBuffer&)
     {
         // TODO: Implement
     }
@@ -85,7 +85,7 @@ public:
         });
     }
 
-    static TxBody FromJSON(const json& json)
+    static TxBody FromJSON(const json&)
     {
         // TODO: Implement
     }

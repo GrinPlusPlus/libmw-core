@@ -4,9 +4,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/common/Secure.h>
-#include<mw/core/models/crypto/SecretKey.h>
-#include<mw/core/exceptions/CryptoException.h>
+#include <mw/core/common/Secure.h>
+#include <mw/core/models/crypto/SecretKey.h>
+#include <mw/core/exceptions/CryptoException.h>
 
 #include <random>
 

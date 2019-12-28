@@ -1,6 +1,6 @@
 #include "ThreadManagerImpl.h"
 
-#include<mw/core/common/ThreadManager.h>
+#include <mw/core/common/ThreadManager.h>
 #include <sstream>
 
 ThreadManager& ThreadManager::GetInstance()

@@ -6,7 +6,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <string>
-#include<mw/core/exceptions/DeserializationException.h>
+#include <mw/core/exceptions/DeserializationException.h>
 
 enum EOutputFeatures
 {

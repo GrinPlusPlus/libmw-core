@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
-#include<mw/core/crypto/secp256k1.h>
-#include<mw/core/crypto/Crypto.h>
-#include<mw/core/crypto/Random.h>
+#include <mw/core/crypto/secp256k1.h>
+#include <mw/core/crypto/Crypto.h>
+#include <mw/core/crypto/Random.h>
 
 TEST_CASE("Crypto::AddCommitment")
 {

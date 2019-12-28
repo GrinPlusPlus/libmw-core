@@ -1,8 +1,8 @@
 #include "Pedersen.h"
 #include "CommitmentUtil.h"
 
-#include<mw/core/exceptions/CryptoException.h>
-#include<mw/core/common/Logger.h>
+#include <mw/core/exceptions/CryptoException.h>
+#include <mw/core/common/Logger.h>
 
 Commitment Pedersen::PedersenCommit(const uint64_t value, const BlindingFactor& blindingFactor) const
 {

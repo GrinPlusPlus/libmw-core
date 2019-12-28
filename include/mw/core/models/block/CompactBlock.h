@@ -4,13 +4,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/models/block/Header.h>
-#include<mw/core/models/ShortId.h>
-#include<mw/core/models/tx/Output.h>
-#include<mw/core/models/tx/Kernel.h>
-#include<mw/core/traits/Printable.h>
-#include<mw/core/traits/Serializable.h>
-#include<mw/core/traits/Hashable.h>
+#include <mw/core/models/block/Header.h>
+#include <mw/core/models/ShortId.h>
+#include <mw/core/models/tx/Output.h>
+#include <mw/core/models/tx/Kernel.h>
+#include <mw/core/traits/Printable.h>
+#include <mw/core/traits/Serializable.h>
+#include <mw/core/traits/Hashable.h>
 
 class CompactBlock :
     public Traits::IPrintable,

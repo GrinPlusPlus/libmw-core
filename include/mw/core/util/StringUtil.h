@@ -4,8 +4,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include<mw/core/traits/Printable.h>
-#include<mw/core/common/filesystem.h>
+#include <mw/core/traits/Printable.h>
+#include <mw/core/common/filesystem.h>
 
 #include <fmt/format.h>
 #include <memory>
