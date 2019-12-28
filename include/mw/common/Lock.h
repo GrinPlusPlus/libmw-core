@@ -261,7 +261,7 @@ public:
     {
         if (!std::is_base_of<Traits::IBatchable, T>::value)
         {
-            throw UNIMPLEMENTED_EXCEPTION;
+            throw UnimplementedEx("BatchWrite only implemented for batchable objects");
         }
 
         return Writer<T>::Create(true, m_pObject, m_pMutex);
