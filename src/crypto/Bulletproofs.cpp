@@ -1,7 +1,6 @@
 #include "Bulletproofs.h"
-#include "Pedersen.h"
+#include "CommitmentUtil.h"
 
-//#include <mw/util/FunctionalUtil.h>
 #include <mw/crypto/Random.h>
 #include <mw/exceptions/CryptoException.h>
 
@@ -40,12 +39,15 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
         valueGenerators.push_back(secp256k1_generator_const_h);
     }
 
-    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = Pedersen::ConvertCommitments(
+    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = CommitmentUtil::ConvertCommitments(
         *m_context.Read()->Get(),
         commitments
     );
 
-    secp256k1_scratch_space* pScratchSpace = secp256k1_scratch_space_create(m_context.Read()->Get(), SCRATCH_SPACE_SIZE);
+    secp256k1_scratch_space* pScratchSpace = secp256k1_scratch_space_create(
+        m_context.Read()->Get(),
+        SCRATCH_SPACE_SIZE
+    );
     const int result = secp256k1_bulletproof_rangeproof_verify_multi(
         m_context.Read()->Get(),
         pScratchSpace,
@@ -63,7 +65,7 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
     );
     secp256k1_scratch_space_destroy(pScratchSpace);
 
-    Pedersen::CleanupCommitments(commitmentPointers);
+    CommitmentUtil::CleanupCommitments(commitmentPointers);
 
     if (result == 1)
     {
@@ -76,7 +78,12 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
     return result == 1;
 }
 
-RangeProof Bulletproofs::GenerateRangeProof(const uint64_t amount, const SecretKey& key, const SecretKey& privateNonce, const SecretKey& rewindNonce, const ProofMessage& proofMessage)
+RangeProof Bulletproofs::GenerateRangeProof(
+    const uint64_t amount,
+    const SecretKey& key,
+    const SecretKey& privateNonce,
+    const SecretKey& rewindNonce,
+    const ProofMessage& proofMessage)
 {
     auto contextWriter = m_context.Write();
     secp256k1_context* pContext = contextWriter->Randomized();
@@ -120,9 +127,12 @@ RangeProof Bulletproofs::GenerateRangeProof(const uint64_t amount, const SecretK
     throw CryptoEx_F("secp256k1_bulletproof_rangeproof_prove failed with error: {}", result);
 }
 
-std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(const Commitment& commitment, const RangeProof& rangeProof, const SecretKey& nonce) const
+std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(
+    const Commitment& commitment,
+    const RangeProof& rangeProof,
+    const SecretKey& nonce) const
 {
-    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = Pedersen::ConvertCommitments(
+    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = CommitmentUtil::ConvertCommitments(
         *m_context.Read()->Get(),
         std::vector<Commitment>({ commitment })
     );
@@ -146,7 +156,7 @@ std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(const Commitment& commit
             0,
             message.data()
         );
-        Pedersen::CleanupCommitments(commitmentPointers);
+        CommitmentUtil::CleanupCommitments(commitmentPointers);
 
         if (result == 1)
         {

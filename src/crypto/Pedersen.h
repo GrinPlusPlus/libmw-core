@@ -32,15 +32,6 @@ public:
 		const uint64_t amount
 	) const;
 
-	static std::vector<secp256k1_pedersen_commitment*> ConvertCommitments(
-		const secp256k1_context& context,
-		const std::vector<Commitment>& commitments
-	);
-
-	static void CleanupCommitments(
-		std::vector<secp256k1_pedersen_commitment*>& commitments
-	);
-
 private:
 	Locked<Context> m_context;
 };

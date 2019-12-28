@@ -1,4 +1,5 @@
 #include "Pedersen.h"
+#include "CommitmentUtil.h"
 
 #include <mw/exceptions/CryptoException.h>
 #include <mw/common/Logger.h>
@@ -37,11 +38,11 @@ Commitment Pedersen::PedersenCommit(const uint64_t value, const BlindingFactor& 
 
 Commitment Pedersen::PedersenCommitSum(const std::vector<Commitment>& positive, const std::vector<Commitment>& negative) const
 {
-    std::vector<secp256k1_pedersen_commitment*> positiveCommitments = Pedersen::ConvertCommitments(
+    std::vector<secp256k1_pedersen_commitment*> positiveCommitments = CommitmentUtil::ConvertCommitments(
         *m_context.Read()->Get(),
         positive
     );
-    std::vector<secp256k1_pedersen_commitment*> negativeCommitments = Pedersen::ConvertCommitments(
+    std::vector<secp256k1_pedersen_commitment*> negativeCommitments = CommitmentUtil::ConvertCommitments(
         *m_context.Read()->Get(),
         negative
     );
@@ -56,8 +57,8 @@ Commitment Pedersen::PedersenCommitSum(const std::vector<Commitment>& positive, 
         negativeCommitments.size()
     );
 
-    Pedersen::CleanupCommitments(positiveCommitments);
-    Pedersen::CleanupCommitments(negativeCommitments);
+    CommitmentUtil::CleanupCommitments(positiveCommitments);
+    CommitmentUtil::CleanupCommitments(negativeCommitments);
 
     if (result != 1)
     {
@@ -128,37 +129,4 @@ SecretKey Pedersen::BlindSwitch(const SecretKey& blindingFactor, const uint64_t 
     }
 
     throw CryptoEx_F("secp256k1_blind_switch failed with error: {}", result);
-}
-
-std::vector<secp256k1_pedersen_commitment*> Pedersen::ConvertCommitments(const secp256k1_context& context, const std::vector<Commitment>& commitments)
-{
-    std::vector<secp256k1_pedersen_commitment*> convertedCommitments(commitments.size(), NULL);
-    for (int i = 0; i < commitments.size(); i++)
-    {
-        secp256k1_pedersen_commitment* pCommitment = new secp256k1_pedersen_commitment();
-        const int parsed = secp256k1_pedersen_commitment_parse(
-            &context,
-            pCommitment,
-            commitments[i].data()
-        );
-        convertedCommitments[i] = pCommitment;
-
-        if (parsed != 1)
-        {
-            CleanupCommitments(convertedCommitments);
-            throw CryptoEx_F("secp256k1_pedersen_commitment_parse failed with error: {}", parsed);
-        }
-    }
-
-    return convertedCommitments;
-}
-
-void Pedersen::CleanupCommitments(std::vector<secp256k1_pedersen_commitment*>& commitments)
-{
-    for (secp256k1_pedersen_commitment* pCommitment : commitments)
-    {
-        delete pCommitment;
-    }
-
-    commitments.clear();
 }
