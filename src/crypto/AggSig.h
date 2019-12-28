@@ -2,11 +2,11 @@
 
 #include "Context.h"
 
-#include <mw/models/crypto/Commitment.h>
-#include <mw/models/crypto/SecretKey.h>
-#include <mw/models/crypto/Signature.h>
-#include <mw/models/crypto/PublicKey.h>
-#include <mw/models/crypto/Hash.h>
+#include<mw/core/models/crypto/Commitment.h>
+#include<mw/core/models/crypto/SecretKey.h>
+#include<mw/core/models/crypto/Signature.h>
+#include<mw/core/models/crypto/PublicKey.h>
+#include<mw/core/models/crypto/Hash.h>
 
 #include <shared_mutex>
 

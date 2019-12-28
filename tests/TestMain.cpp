@@ -1,5 +1,5 @@
-#include <mw/common/ChildProcess.h>
-#include <mw/util/FileUtil.h>
+#include<mw/core/common/ChildProcess.h>
+#include<mw/core/util/FileUtil.h>
 #include <thread>
 
 void RunTest(const std::string& tests)

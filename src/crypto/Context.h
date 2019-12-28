@@ -1,10 +1,10 @@
 #pragma once
 
-#include <mw/common/Lock.h>
-#include <mw/crypto/Random.h>
-#include <mw/models/crypto/SecretKey.h>
-#include <mw/exceptions/CryptoException.h>
-#include <mw/crypto/secp256k1.h>
+#include<mw/core/common/Lock.h>
+#include<mw/core/crypto/Random.h>
+#include<mw/core/models/crypto/SecretKey.h>
+#include<mw/core/exceptions/CryptoException.h>
+#include<mw/core/crypto/secp256k1.h>
 
 class Context
 {

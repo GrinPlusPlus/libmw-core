@@ -3,11 +3,11 @@
 #include "Context.h"
 #include "BulletproofsCache.h"
 
-#include <mw/models/crypto/Commitment.h>
-#include <mw/models/crypto/RangeProof.h>
-#include <mw/models/crypto/BlindingFactor.h>
-#include <mw/models/crypto/ProofMessage.h>
-#include <mw/models/crypto/RewoundProof.h>
+#include<mw/core/models/crypto/Commitment.h>
+#include<mw/core/models/crypto/RangeProof.h>
+#include<mw/core/models/crypto/BlindingFactor.h>
+#include<mw/core/models/crypto/ProofMessage.h>
+#include<mw/core/models/crypto/RewoundProof.h>
 
 class Bulletproofs
 {

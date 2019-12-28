@@ -1,8 +1,8 @@
 #include "Bulletproofs.h"
 #include "CommitmentUtil.h"
 
-#include <mw/crypto/Random.h>
-#include <mw/exceptions/CryptoException.h>
+#include<mw/core/crypto/Random.h>
+#include<mw/core/exceptions/CryptoException.h>
 
 const uint64_t MAX_WIDTH = 1 << 20;
 const size_t SCRATCH_SPACE_SIZE = 256 * MAX_WIDTH;

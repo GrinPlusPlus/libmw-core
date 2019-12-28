@@ -1,7 +1,7 @@
 #pragma once
 
 #include <spdlog/spdlog.h>
-#include <mw/common/Logger.h>
+#include<mw/core/common/Logger.h>
 
 class Logger
 {

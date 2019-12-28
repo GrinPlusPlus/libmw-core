@@ -1,6 +1,6 @@
 #include "PublicKeys.h"
 
-#include <mw/exceptions/CryptoException.h>
+#include<mw/core/exceptions/CryptoException.h>
 
 PublicKey PublicKeys::CalculatePublicKey(const SecretKey& privateKey) const
 {
