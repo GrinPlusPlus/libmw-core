@@ -13,7 +13,6 @@
 #add_subdirectory(deps/cuckoo)
 #add_subdirectory(deps/cppcodec)
 #add_subdirectory(deps/ed25519-donna)
-#add_definitions(-DASIO_STANDALONE)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS_ORIG "${CMAKE_CXX_FLAGS}")
@@ -49,6 +48,10 @@ include_directories(${PROJECT_SOURCE_DIR}/deps/fmt/include)
 
 # ghc
 include_directories(${PROJECT_SOURCE_DIR}/deps/ghc/include)
+
+# asio
+add_definitions(-DASIO_STANDALONE)
+include_directories(${PROJECT_SOURCE_DIR}/deps/asio/asio/include)
 
 # crypto
 include_directories(${PROJECT_SOURCE_DIR}/deps/crypto/include)
