@@ -33,9 +33,9 @@ jobs:
       - name: configure and compile
         working-directory: build
         run: |
-          cmake ..
-          cmake --build . --config Release
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build .
       - name: run tests
-        working-directory: bin/Release
+        working-directory: bin/release
         run: |
           ./Tests
