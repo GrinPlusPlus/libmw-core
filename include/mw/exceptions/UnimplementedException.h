@@ -10,7 +10,7 @@ class UnimplementedException : public GrinException
 {
 public:
     UnimplementedException(const std::string& message, const std::string& function)
-        : GrinException(message, function)
+        : GrinException("UnimplementedException", message, function)
     {
 
     }

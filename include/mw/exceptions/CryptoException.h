@@ -10,7 +10,7 @@ class CryptoException : public GrinException
 {
 public:
     CryptoException(const std::string& message, const std::string& function)
-        : GrinException(message, function)
+        : GrinException("CryptoException", message, function)
     {
 
     }

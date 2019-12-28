@@ -169,6 +169,22 @@ public:
         return std::vector<uint8_t>(m_bytes.cbegin() + index, m_bytes.cbegin() + index + numBytes);
     }
 
+    template<size_t T>
+    std::array<uint8_t, T> ReadArray()
+    {
+        if (m_index + T > m_bytes.size())
+        {
+            throw DeserializationEx("Attempted to read past end of ByteBuffer.");
+        }
+
+        const size_t index = m_index;
+        m_index += T;
+
+        std::array<uint8_t, T> arr;
+        std::copy(m_bytes.begin() + index, m_bytes.begin() + index + T, arr.begin());
+        return arr;
+    }
+
     size_t GetRemainingSize() const
     {
         return m_bytes.size() - m_index;

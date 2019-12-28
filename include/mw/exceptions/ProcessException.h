@@ -10,7 +10,7 @@ class ProcessException : public GrinException
 {
 public:
     ProcessException(const std::string& message, const std::string& function)
-        : GrinException(message, function)
+        : GrinException("ProcessException", message, function)
     {
 
     }

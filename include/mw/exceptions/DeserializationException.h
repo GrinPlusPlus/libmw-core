@@ -10,7 +10,7 @@ class DeserializationException : public GrinException
 {
 public:
     DeserializationException(const std::string& message, const std::string& function)
-        : GrinException(message, function)
+        : GrinException("DeserializationException", message, function)
     {
 
     }

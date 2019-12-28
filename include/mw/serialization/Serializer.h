@@ -60,6 +60,13 @@ public:
         return *this;
     }
 
+    template <size_t T>
+    Serializer& AppendArray(const std::array<uint8_t, T>& arr)
+    {
+        m_serialized.insert(m_serialized.end(), arr.cbegin(), arr.cend());
+        return *this;
+    }
+
     Serializer& AppendVarStr(const std::string& varString)
     {
         size_t stringLength = varString.length();
