@@ -34,9 +34,7 @@ set(WITH_GFLAGS OFF)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+include(cmake/SetOutputDir.cmake)
 
 # Dependencies
 include(deps/dependencies.cmake)

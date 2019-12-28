@@ -8,10 +8,12 @@
 #include <mw/models/tx/TxBody.h>
 #include <mw/traits/Printable.h>
 #include <mw/traits/Serializable.h>
+#include <mw/traits/Hashable.h>
 
 class Block :
     public Traits::IPrintable,
-    public Traits::ISerializable
+    public Traits::ISerializable,
+    public Traits::IHashable
 {
 public:
     using CPtr = std::shared_ptr<const Block>;
@@ -66,11 +68,6 @@ public:
     //static Block::CPtr Deserialize(ByteBuffer& byteBuffer); // TODO: How do we deserialize header?
 
     //
-    // Hashing
-    //
-    const Hash& GetHash() const { return m_pHeader->GetHash(); }
-
-    //
     // Validates all the elements in a block that can be checked without additional data. 
     // Includes commitment sums, kernels, reward, etc.
     //
@@ -79,6 +76,7 @@ public:
     //
     // Traits
     //
+    virtual Hash GetHash() const { return m_pHeader->GetHash(); }
     virtual std::string Format() const override final { return GetHash().ToHex(); }
 
 private:
