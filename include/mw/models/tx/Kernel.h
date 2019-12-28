@@ -92,22 +92,26 @@ public:
     //
     virtual Serializer& Serialize(Serializer& serializer) const override final
     {
-
+        // TODO: Implement
+        return serializer;
     }
 
     static Kernel Deserialize(ByteBuffer& byteBuffer)
     {
-
+        // TODO: Implement
+        return Kernel();
     }
 
     virtual json ToJSON() const override final
     {
-
+        // TODO: Implement
+        return json();
     }
 
     static Kernel FromJSON(const json& json)
     {
-
+        // TODO: Implement
+        return Kernel();
     }
 
     //

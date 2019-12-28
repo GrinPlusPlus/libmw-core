@@ -14,6 +14,8 @@ class Block :
     public Traits::ISerializable
 {
 public:
+    using CPtr = std::shared_ptr<const Block>;
+
     //
     // Constructors
     //
@@ -60,7 +62,8 @@ public:
         m_body.Serialize(serializer);
         return serializer;
     }
-    static Block Deserialize(ByteBuffer& byteBuffer); // TODO: How do we deserialize header?
+
+    //static Block::CPtr Deserialize(ByteBuffer& byteBuffer); // TODO: How do we deserialize header?
 
     //
     // Hashing
