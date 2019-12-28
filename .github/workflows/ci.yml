@@ -35,3 +35,7 @@ jobs:
         run: |
           cmake ..
           cmake --build . --config RelWithDebInfo
+      - name: run tests
+        working-directory: bin/RelWithDebInfo
+        run: |
+          Tests
