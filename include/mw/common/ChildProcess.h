@@ -54,6 +54,7 @@ public:
     }
 
     bool IsRunning() const { return m_process.running(); }
+    int GetExitStatus() const { return m_process.exit_status(); }
 
 private:
     ChildProcess() = default;

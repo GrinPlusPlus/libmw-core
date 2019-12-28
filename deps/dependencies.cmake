@@ -69,7 +69,7 @@ endif()
 
 add_library(secp256k1-zkp STATIC ${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp/src/secp256k1.c)
 target_compile_definitions(secp256k1-zkp PRIVATE HAVE_CONFIG_H SECP256K1_BUILD)
-target_include_directories(secp256k1-zkp PRIVATE ${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp)
+target_include_directories(secp256k1-zkp PRIVATE ${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp ${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp/src)
 
 
 

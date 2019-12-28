@@ -15,6 +15,11 @@ void RunTest(const std::string& tests)
 	}
 
 	printf("\n\n");
+
+	if (pPtr->GetExitStatus() != 0)
+	{
+		exit(pPtr->GetExitStatus());
+	}
 }
 
 int main(int argc, char* argv[])
