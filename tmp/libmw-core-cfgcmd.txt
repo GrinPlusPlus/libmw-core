@@ -1,1 +1,0 @@
-cmd='C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe;-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>;-DCMAKE_PROJECT_geGL_INCLUDE:PATH=E:/repos/LTC/libmw-ltc/../include.cmake;-DROOT_DIR:PATH=E:/repos/LTC/libmw-ltc/..;-DBUILD_SHARED_LIBS=ON;-GNinja;<SOURCE_DIR><SOURCE_SUBDIR>'
