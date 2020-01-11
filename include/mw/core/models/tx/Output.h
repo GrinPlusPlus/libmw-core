@@ -46,8 +46,8 @@ public:
     //
     Output& operator=(const Output& Output) = default;
     Output& operator=(Output&& Output) noexcept = default;
-    bool operator<(const Output& Output) const { return GetHash() < Output.GetHash(); }
-    bool operator==(const Output& Output) const { return GetHash() == Output.GetHash(); }
+    bool operator<(const Output& Output) const { return m_hash < Output.m_hash; }
+    bool operator==(const Output& Output) const { return m_hash == Output.m_hash; }
 
     //
     // Getters

@@ -37,7 +37,7 @@ public:
     }
 
     template <class T>
-    Serializer& AppendLittleEndian(const T& t)
+    Serializer& AppendLE(const T& t)
     {
         std::vector<uint8_t> temp(sizeof(T));
         memcpy(&temp[0], &t, sizeof(T));

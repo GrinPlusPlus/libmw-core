@@ -187,7 +187,7 @@ SecretKey Crypto::AddPrivateKeys(const SecretKey& secretKey1, const SecretKey& s
         return result;
     }
 
-    throw CryptoEx("secp256k1_ec_privkey_tweak_add failed");
+    ThrowCrypto("secp256k1_ec_privkey_tweak_add failed");
 }
 
 RangeProof Crypto::GenerateRangeProof(
@@ -246,7 +246,7 @@ std::vector<uint8_t> Crypto::AES256_Encrypt(
     const size_t nLen = enc.Encrypt(input.data(), (int)input.size(), ciphertext.data());
     if (nLen < input.size())
     {
-        throw CryptoEx("Failed to encrypt");
+        ThrowCrypto("Failed to encrypt");
     }
 
     ciphertext.resize(nLen);
@@ -268,7 +268,7 @@ SecureVector Crypto::AES256_Decrypt(
     size_t nLen = dec.Decrypt(ciphertext.data(), (int)ciphertext.size(), plaintext.data());
     if (nLen == 0)
     {
-        throw CryptoEx("Failed to decrypt");
+        ThrowCrypto("Failed to decrypt");
     }
 
     plaintext.resize(nLen);
@@ -300,7 +300,7 @@ SecretKey Crypto::PBKDF(
         return result;
     }
 
-    throw CryptoEx("Scrypt failed");
+    ThrowCrypto("Scrypt failed");
 }
 
 PublicKey Crypto::CalculatePublicKey(const SecretKey& privateKey)

@@ -5,7 +5,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <mw/core/traits/Printable.h>
-#include <mw/core/common/filesystem.h>
 
 #include <fmt/format.h>
 #include <memory>
@@ -131,11 +130,6 @@ private:
     static decltype(auto) ConvertArg(const std::wstring& x)
     {
         return StringUtil::ToUTF8(x);
-    }
-
-    static decltype(auto) ConvertArg(const fs::path& path)
-    {
-        return path.u8string();
     }
 
     template <class T>

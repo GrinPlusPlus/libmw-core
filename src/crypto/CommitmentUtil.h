@@ -5,10 +5,10 @@
 class CommitmentUtil
 {
 public:
-	static std::vector<secp256k1_pedersen_commitment*> ConvertCommitments(
-		const secp256k1_context& context,
-		const std::vector<Commitment>& commitments)
-	{
+    static std::vector<secp256k1_pedersen_commitment*> ConvertCommitments(
+        const secp256k1_context& context,
+        const std::vector<Commitment>& commitments)
+    {
         std::vector<secp256k1_pedersen_commitment*> convertedCommitments(commitments.size(), NULL);
         for (int i = 0; i < commitments.size(); i++)
         {
@@ -23,12 +23,12 @@ public:
             if (parsed != 1)
             {
                 CleanupCommitments(convertedCommitments);
-                throw CryptoEx_F("secp256k1_pedersen_commitment_parse failed with error: {}", parsed);
+                ThrowCrypto_F("secp256k1_pedersen_commitment_parse failed with error: {}", parsed);
             }
         }
 
         return convertedCommitments;
-	}
+    }
 
     static void CleanupCommitments(std::vector<secp256k1_pedersen_commitment*>& commitments)
     {

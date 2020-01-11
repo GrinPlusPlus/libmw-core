@@ -24,7 +24,7 @@ SecretKey AggSig::GenerateSecureNonce() const
         return nonce;
     }
 
-    throw CryptoEx_F("secp256k1_aggsig_export_secnonce_single failed with error: {}", result);
+    ThrowCrypto_F("secp256k1_aggsig_export_secnonce_single failed with error: {}", result);
 }
 
 CompactSignature::UPtr AggSig::SignMessage(

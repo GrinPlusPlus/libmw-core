@@ -6,6 +6,7 @@ file(GLOB SOURCE_CODE
 	"block/*.cpp"
 	"tx/*.cpp"
 	"net/*.cpp"
+	"net/rpc/*.cpp"
 )
 
 add_executable(${TARGET_NAME} ${SOURCE_CODE})

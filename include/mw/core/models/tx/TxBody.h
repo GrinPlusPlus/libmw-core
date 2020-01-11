@@ -92,7 +92,7 @@ public:
 
 private:
     // List of inputs spent by the transaction.
-    std::vector<Input> m_inputs;
+    std::vector<Input> m_inputs; // TODO: Use set or multiset?
 
     // List of outputs the transaction produces.
     std::vector<Output> m_outputs;

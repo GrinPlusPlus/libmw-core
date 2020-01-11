@@ -124,7 +124,7 @@ RangeProof Bulletproofs::GenerateRangeProof(
         return RangeProof(std::move(proofBytes));
     }
 
-    throw CryptoEx_F("secp256k1_bulletproof_rangeproof_prove failed with error: {}", result);
+    ThrowCrypto_F("secp256k1_bulletproof_rangeproof_prove failed with error: {}", result);
 }
 
 std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(

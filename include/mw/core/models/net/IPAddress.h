@@ -59,10 +59,10 @@ public:
     //
     // Getters
     //
-    const asio::ip::address& GetAddress() const { return m_address; }
-    bool IsV4() const { return m_address.is_v4(); }
-    bool IsV6() const { return m_address.is_v6(); }
-    bool IsLocalhost() const { return m_address.is_loopback(); }
+    const asio::ip::address& GetAddress() const noexcept { return m_address; }
+    bool IsV4() const noexcept { return m_address.is_v4(); }
+    bool IsV6() const noexcept { return m_address.is_v6(); }
+    bool IsLocalhost() const noexcept { return m_address.is_loopback(); }
     virtual std::string Format() const override final { return m_address.to_string(); }
 
     //

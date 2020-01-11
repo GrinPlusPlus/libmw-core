@@ -26,14 +26,14 @@ Commitment Pedersen::PedersenCommit(const uint64_t value, const BlindingFactor& 
         if (serializedResult != 1)
         {
             LOG_ERROR_F("Failed to serialize commitment. Result: {}", serializedResult);
-            throw CryptoEx("Failed to serialize commitment.");
+            ThrowCrypto("Failed to serialize commitment.");
         }
 
         return resultCommitment;
     }
 
     LOG_ERROR_F("Failed to create commitment. Result: {}, Value: {}", result, value);
-    throw CryptoEx("Failed to create commitment.");
+    ThrowCrypto("Failed to create commitment.");
 }
 
 Commitment Pedersen::PedersenCommitSum(const std::vector<Commitment>& positive, const std::vector<Commitment>& negative) const
@@ -63,7 +63,7 @@ Commitment Pedersen::PedersenCommitSum(const std::vector<Commitment>& positive, 
     if (result != 1)
     {
         LOG_ERROR_F("secp256k1_pedersen_commit_sum returned result: {}", result);
-        throw CryptoEx("secp256k1_pedersen_commit_sum error");
+        ThrowCrypto("secp256k1_pedersen_commit_sum error");
     }
 
     Commitment resultCommitment;
@@ -75,7 +75,7 @@ Commitment Pedersen::PedersenCommitSum(const std::vector<Commitment>& positive, 
     if (serializeResult != 1)
     {
         LOG_ERROR_F("secp256k1_pedersen_commitment_serialize returned result: {}", serializeResult);
-        throw CryptoEx("secp256k1_pedersen_commitment_serialize error");
+        ThrowCrypto("secp256k1_pedersen_commitment_serialize error");
     }
 
     return resultCommitment;
@@ -108,7 +108,7 @@ BlindingFactor Pedersen::PedersenBlindSum(const std::vector<BlindingFactor>& pos
     }
 
     LOG_ERROR_F("secp256k1_pedersen_blind_sum returned result: {}", result);
-    throw CryptoEx("secp256k1_pedersen_blind_sum error");
+    ThrowCrypto("secp256k1_pedersen_blind_sum error");
 }
 
 SecretKey Pedersen::BlindSwitch(const SecretKey& blindingFactor, const uint64_t amount) const
@@ -128,5 +128,5 @@ SecretKey Pedersen::BlindSwitch(const SecretKey& blindingFactor, const uint64_t 
         return blindSwitch;
     }
 
-    throw CryptoEx_F("secp256k1_blind_switch failed with error: {}", result);
+    ThrowCrypto_F("secp256k1_blind_switch failed with error: {}", result);
 }

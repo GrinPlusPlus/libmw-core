@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mw/core/common/Logger.h>
+//#include <mw/core/common/Logger.h>
 
 #include <stdexcept>
 #include <string>
@@ -25,7 +25,7 @@ protected:
         m_function = function;
         m_what = function + ": " + message;
 
-        LOG_WARNING_F("{} thrown at {}: {}", type, function, message);
+        //LOG_WARNING_F("{} thrown at {}: {}", type, function, message);
     }
 
 private:

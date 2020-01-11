@@ -24,8 +24,14 @@ if(MSVC)
 endif()
 
 # spdlog
+if (WIN32)
+    #add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
+endif()
 add_definitions(-DSPDLOG_WCHAR_FILENAMES)
 include_directories(${PROJECT_SOURCE_DIR}/deps/spdlog/include)
+
+# mio (memmap)
+include_directories(${PROJECT_SOURCE_DIR}/deps/mio/include)
 
 # caches
 include_directories(${PROJECT_SOURCE_DIR}/deps/caches/include)
@@ -49,9 +55,12 @@ include_directories(${PROJECT_SOURCE_DIR}/deps/fmt/include)
 # ghc
 include_directories(${PROJECT_SOURCE_DIR}/deps/ghc/include)
 
+# optional
+include_directories(${PROJECT_SOURCE_DIR}/deps/optional/include)
+
 # asio
 add_definitions(-DASIO_STANDALONE)
-include_directories(${PROJECT_SOURCE_DIR}/deps/asio/asio/include)
+include_directories(${PROJECT_SOURCE_DIR}/deps/asio/include)
 
 # crypto
 include_directories(${PROJECT_SOURCE_DIR}/deps/crypto/include)
@@ -59,6 +68,10 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/deps/crypto)
 
 # secp256k1-zkp
 include_directories(${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp/include)
+
+# civetweb
+include_directories(${PROJECT_SOURCE_DIR}/deps/civetweb/include)
+add_subdirectory(${PROJECT_SOURCE_DIR}/deps/civetweb)
 
 if(WIN32)
     configure_file(${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp/libsecp256k1-config.h ${PROJECT_SOURCE_DIR}/deps/secp256k1-zkp/src/libsecp256k1-config.h COPYONLY)

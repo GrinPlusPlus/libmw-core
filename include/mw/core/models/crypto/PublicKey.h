@@ -6,26 +6,26 @@
 class PublicKey : public Traits::ISerializable
 {
 public:
-	PublicKey() = default;
-	PublicKey(BigInt<33>&& compressed) : m_compressed(std::move(compressed)) { }
-	virtual ~PublicKey() = default;
+    PublicKey() = default;
+    PublicKey(BigInt<33>&& compressed) : m_compressed(std::move(compressed)) { }
+    virtual ~PublicKey() = default;
 
-	const BigInt<33>& GetBigInt() const { return m_compressed; }
-	const std::vector<uint8_t>& vec() const { return m_compressed.vec(); }
-	const uint8_t* data() const { return m_compressed.data(); }
-	uint8_t* data() { return m_compressed.data(); }
-	size_t size() const { return m_compressed.size(); }
+    const BigInt<33>& GetBigInt() const { return m_compressed; }
+    const std::vector<uint8_t>& vec() const { return m_compressed.vec(); }
+    const uint8_t* data() const { return m_compressed.data(); }
+    uint8_t* data() { return m_compressed.data(); }
+    size_t size() const { return m_compressed.size(); }
 
-	virtual Serializer& Serialize(Serializer& serializer) const override final
-	{
-		return m_compressed.Serialize(serializer);
-	}
+    virtual Serializer& Serialize(Serializer& serializer) const override final
+    {
+        return m_compressed.Serialize(serializer);
+    }
 
-	static PublicKey Deserialize(ByteBuffer& byteBuffer)
-	{
-		return PublicKey(BigInt<33>::Deserialize(byteBuffer));
-	}
+    static PublicKey Deserialize(ByteBuffer& byteBuffer)
+    {
+        return PublicKey(BigInt<33>::Deserialize(byteBuffer));
+    }
 
 private:
-	BigInt<33> m_compressed;
+    BigInt<33> m_compressed;
 };

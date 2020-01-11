@@ -20,10 +20,12 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # Dependencies
 include(deps/dependencies.cmake)
 
-add_definitions(-DUNICODE)
-add_definitions(-DNOMINMAX)
+if (WIN32)
+    add_definitions(-DMW_ENABLE_WSTRING -DUNICODE -DNOMINMAX)
+endif()
 
 add_subdirectory(src/common)
+add_subdirectory(src/net)
 add_subdirectory(src/crypto)
 
 if (MSVC)

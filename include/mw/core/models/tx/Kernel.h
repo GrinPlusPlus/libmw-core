@@ -57,9 +57,9 @@ public:
     //
     Kernel& operator=(const Kernel& kernel) = default;
     Kernel& operator=(Kernel&& kernel) noexcept = default;
-    bool operator<(const Kernel& kernel) const { return GetHash() < kernel.GetHash(); }
-    bool operator==(const Kernel& kernel) const { return GetHash() == kernel.GetHash(); }
-    bool operator!=(const Kernel& kernel) const { return GetHash() != kernel.GetHash(); }
+    bool operator<(const Kernel& kernel) const { return m_hash < kernel.m_hash; }
+    bool operator==(const Kernel& kernel) const { return m_hash == kernel.m_hash; }
+    bool operator!=(const Kernel& kernel) const { return m_hash != kernel.m_hash; }
 
     //
     // Getters

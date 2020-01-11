@@ -31,7 +31,7 @@ PublicKey PublicKeys::CalculatePublicKey(const SecretKey& privateKey) const
         }
     }
 
-    throw CryptoEx("Failed to calculate public key");
+    ThrowCrypto("Failed to calculate public key");
 }
 
 PublicKey PublicKeys::PublicKeySum(const std::vector<PublicKey>& publicKeys) const
@@ -67,7 +67,7 @@ PublicKey PublicKeys::PublicKeySum(const std::vector<PublicKey>& publicKeys) con
         }
     }
 
-    throw CryptoEx("Failed to combine public keys.");
+    ThrowCrypto("Failed to combine public keys.");
 }
 
 std::vector<secp256k1_pubkey*> PublicKeys::ParsePubKeys(const std::vector<PublicKey>& publicKeys) const
@@ -94,7 +94,7 @@ std::vector<secp256k1_pubkey*> PublicKeys::ParsePubKeys(const std::vector<Public
                 delete pParsedPubKey;
             }
 
-            throw CryptoEx_F("secp256k1_ec_pubkey_parse failed with error: {}", pubKeyParsed);
+            ThrowCrypto_F("secp256k1_ec_pubkey_parse failed with error: {}", pubKeyParsed);
         }
     }
 

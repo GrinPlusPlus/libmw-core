@@ -47,7 +47,7 @@ private:
         const NTSTATUS status = BCryptGenRandom(nullptr, buffer.data(), (ULONG)buffer.size(), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
         if (!BCRYPT_SUCCESS(status))
         {
-            throw CryptoEx("RNG Failure");
+            ThrowCrypto("RNG Failure");
         }
 #else
         bool success = false;
@@ -64,7 +64,7 @@ private:
 
         if (!success)
         {
-            throw CryptoEx("RNG Failure");
+            ThrowCrypto("RNG Failure");
         }
 #endif
 

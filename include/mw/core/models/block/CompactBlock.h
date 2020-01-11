@@ -5,7 +5,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <mw/core/models/block/Header.h>
-#include <mw/core/models/ShortId.h>
+#include <mw/core/models/block/ShortId.h>
 #include <mw/core/models/tx/Output.h>
 #include <mw/core/models/tx/Kernel.h>
 #include <mw/core/traits/Printable.h>

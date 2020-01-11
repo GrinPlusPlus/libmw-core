@@ -2,6 +2,7 @@
 
 #include <mw/core/common/ImportExport.h>
 #include <mw/core/util/StringUtil.h>
+#include <mw/core/file/FilePath.h>
 
 #ifdef MW_COMMON
 #define LOGGER_API EXPORT
@@ -17,7 +18,7 @@ namespace LoggerAPI
         WALLET
     };
 
-    LOGGER_API void Initialize(const std::string& logDirectory, const std::string& logLevel);
+    LOGGER_API void Initialize(const FilePath& logDirectory, const std::string& logLevel);
     LOGGER_API void Flush();
 
     LOGGER_API void LogTrace(const std::string& message);
