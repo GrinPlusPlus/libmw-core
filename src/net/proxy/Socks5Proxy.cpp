@@ -55,7 +55,7 @@ void Socks5Proxy::Connect(const std::string& destination, const uint16_t port, c
     serializer.Append<uint8_t>(SOCKS::Command::CONNECT); // CMD CONNECT
     serializer.Append<uint8_t>(0x00); // RSV Reserved must be 0
     serializer.Append<uint8_t>(SOCKS::Atyp::DOMAINNAME); // ATYP DOMAINNAME
-    serializer.AppendVarStr(destination); // Length must be <= 255
+    serializer.Append(destination); // Length must be <= 255
     serializer.Append<uint16_t>(port);
     m_pSocket->Write(serializer.vec(), SOCKS_TIMEOUT);
 
@@ -120,8 +120,8 @@ void Socks5Proxy::Authenticate(const tl::optional<SOCKS::ProxyCredentials>& auth
         // Perform username/password authentication (as described in RFC1929)
         Serializer serializer;
         serializer.Append<uint8_t>(0x01); // Current (and only) version of user/pass subnegotiation
-        serializer.AppendVarStr(auth.username);
-        serializer.AppendVarStr(auth.password);
+        serializer.Append(auth.username);
+        serializer.Append(auth.password);
         m_pSocket->Write(serializer.vec(), SOCKS_TIMEOUT);
 
         std::array<uint8_t, 2> authResponse = m_pSocket->ReadArray<2>(SOCKS_TIMEOUT);
@@ -198,7 +198,7 @@ SOCKS::Destination Socks5Proxy::ReadDestination(const SOCKS::Atyp& type)
     }
 
     std::vector<uint8_t> portBytes = m_pSocket->Read(2, SOCKS_TIMEOUT);
-    destination.port = ByteBuffer(std::move(portBytes)).ReadU16();
+    destination.port = Deserializer(std::move(portBytes)).ReadU16();
 
     return destination;
 }
