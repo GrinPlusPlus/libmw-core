@@ -78,10 +78,10 @@ public:
         return serializer;
     }
 
-    static Transaction Deserialize(ByteBuffer& byteBuffer)
+    static Transaction Deserialize(Deserializer& deserializer)
     {
-        BlindingFactor offset = BlindingFactor::Deserialize(byteBuffer);
-        TransactionBody transactionBody = TransactionBody::Deserialize(byteBuffer);
+        BlindingFactor offset = BlindingFactor::Deserialize(deserializer);
+        TransactionBody transactionBody = TransactionBody::Deserialize(deserializer);
         return Transaction(std::move(offset), std::move(transactionBody));
     }
 

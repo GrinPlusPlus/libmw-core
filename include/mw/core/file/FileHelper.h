@@ -67,7 +67,6 @@ public:
         }
     }
 
-
     void Rename(const std::string& filename)
     {
         if (m_path.IsDirectory())

@@ -4,8 +4,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-//#include <mw/core/Secure.h>
+#include <mw/core/common/Secure.h>
 #include <mw/core/util/EndianUtil.h>
+#include <mw/core/traits/Serializable.h>
 
 #include <cstdint>
 #include <vector>
@@ -17,6 +18,7 @@ class Serializer
 public:
     Serializer() = default;
     Serializer(const size_t expectedSize) { m_serialized.reserve(expectedSize); }
+    ~Serializer() { SecureMem::cleanse(m_serialized.data(), m_serialized.size()); }
 
     template <class T>
     Serializer& Append(const T& t)
@@ -54,25 +56,35 @@ public:
         return *this;
     }
 
-    Serializer& AppendByteVector(const std::vector<uint8_t>& vectorToAppend)
+    Serializer& Append(const std::vector<uint8_t>& vectorToAppend)
     {
         m_serialized.insert(m_serialized.end(), vectorToAppend.cbegin(), vectorToAppend.cend());
         return *this;
     }
 
     template <size_t T>
-    Serializer& AppendArray(const std::array<uint8_t, T>& arr)
+    Serializer& Append(const std::array<uint8_t, T>& arr)
     {
         m_serialized.insert(m_serialized.end(), arr.cbegin(), arr.cend());
         return *this;
     }
 
-    Serializer& AppendVarStr(const std::string& varString)
+    Serializer& Append(const std::string& varString)
     {
         size_t stringLength = varString.length();
         Append<uint64_t>(stringLength);
         m_serialized.insert(m_serialized.end(), varString.cbegin(), varString.cend());
         return *this;
+    }
+
+    Serializer& Append(const Traits::ISerializable& serializable)
+    {
+        return serializable.Serialize(*this);
+    }
+
+    Serializer& Append(const std::shared_ptr<const Traits::ISerializable>& pSerializable)
+    {
+        return pSerializable->Serialize(*this);
     }
 
     const std::vector<uint8_t>& vec() const { return m_serialized; }
@@ -81,17 +93,6 @@ public:
 
     uint8_t& operator[] (const size_t x) { return m_serialized[x]; }
     const uint8_t& operator[] (const size_t x) const { return m_serialized[x]; }
-
-
-    // WARNING: This will destroy the contents of m_serialized.
-    // TODO: Create a SecureSerializer instead.
-    //SecureVector GetSecureBytes()
-    //{
-    //    SecureVector secureBytes(m_serialized.begin(), m_serialized.end());
-    //    cleanse(m_serialized.data(), m_serialized.size());
-
-    //    return secureBytes;
-    //}
 
 private:
     std::vector<uint8_t> m_serialized;

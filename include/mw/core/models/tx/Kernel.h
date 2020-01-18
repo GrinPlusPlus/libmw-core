@@ -97,7 +97,7 @@ public:
         return serializer;
     }
 
-    static Kernel Deserialize(ByteBuffer&)
+    static Kernel Deserialize(Deserializer&)
     {
         // TODO: Implement
         return Kernel();

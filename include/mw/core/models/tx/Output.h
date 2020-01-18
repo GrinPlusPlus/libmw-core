@@ -69,11 +69,11 @@ public:
         return serializer;
     }
 
-    static Output Deserialize(ByteBuffer& byteBuffer)
+    static Output Deserialize(Deserializer& deserializer)
     {
-        const EOutputFeatures features = (EOutputFeatures)byteBuffer.ReadU8();
-        Commitment commitment = Commitment::Deserialize(byteBuffer);
-        RangeProof proof = RangeProof::Deserialize(byteBuffer);
+        const EOutputFeatures features = (EOutputFeatures)deserializer.ReadU8();
+        Commitment commitment = Commitment::Deserialize(deserializer);
+        RangeProof proof = RangeProof::Deserialize(deserializer);
         return Output(features, std::move(commitment), std::move(proof));
     }
 

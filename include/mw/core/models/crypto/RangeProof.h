@@ -54,18 +54,18 @@ public:
     {
         return serializer
             .Append<uint64_t>(m_bytes.size())
-            .AppendByteVector(m_bytes);
+            .Append(m_bytes);
     }
 
-    static RangeProof Deserialize(ByteBuffer& byteBuffer)
+    static RangeProof Deserialize(Deserializer& deserializer)
     {
-        const uint64_t proofSize = byteBuffer.ReadU64();
+        const uint64_t proofSize = deserializer.ReadU64();
         if (proofSize > MAX_SIZE)
         {
-            throw DeserializationEx("RangeProof is larger than MAX_SIZE");
+            ThrowDeserialization("RangeProof is larger than MAX_SIZE");
         }
 
-        return RangeProof(byteBuffer.ReadVector(proofSize));
+        return RangeProof(deserializer.ReadVector(proofSize));
     }
 
     virtual json ToJSON() const override final

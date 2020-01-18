@@ -43,7 +43,7 @@ namespace OutputFeatures
             return EOutputFeatures::COINBASE_OUTPUT;
         }
 
-        throw DeserializationEx_F("Failed to deserialize output feature: {}", string);
+        ThrowDeserialization_F("Failed to deserialize output feature: {}", string);
     }
 }
 
@@ -91,6 +91,6 @@ namespace KernelFeatures
             return EKernelFeatures::HEIGHT_LOCKED;
         }
 
-        throw DeserializationEx_F("Failed to deserialize kernel feature: {}", string);
+        ThrowDeserialization_F("Failed to deserialize kernel feature: {}", string);
     }
 }

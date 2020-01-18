@@ -61,13 +61,12 @@ public:
 
     FilePath GetParent() const
     {
-        FilePath parent(m_path.parent_path());
-        if (parent == m_path)
+        if (!m_path.has_parent_path())
         {
             ThrowFile_F("Can't find parent path for {}", *this);
         }
 
-        return parent;
+        return FilePath(m_path.parent_path());
     }
 
     bool Exists() const
@@ -110,7 +109,7 @@ public:
     {
         std::error_code ec;
         fs::create_directories(m_path, ec);
-        if (ec)
+        if (ec && (!Exists_Safe() || !IsDirectory_Safe()))
         {
             ThrowFile_F("Error ({}) while trying to create directory {}", ec.message(), *this);
         }
@@ -134,6 +133,7 @@ public:
     std::string ToString() const { return m_path.u8string(); }
 #endif
 
+    std::string u8string() const { return m_path.u8string(); }
     const auto* c_str() const { return ToString().c_str(); }
 
     //

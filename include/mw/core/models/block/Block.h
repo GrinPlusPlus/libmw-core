@@ -60,12 +60,17 @@ public:
     //
     virtual Serializer& Serialize(Serializer& serializer) const override final
     {
-        m_pHeader->Serialize(serializer);
-        m_body.Serialize(serializer);
-        return serializer;
+        return serializer.Append(m_pHeader).Append(m_body);
     }
 
-    //static Block::CPtr Deserialize(ByteBuffer& byteBuffer); // TODO: How do we deserialize header?
+    template <typename HeaderType,
+        typename SFINAE = typename std::enable_if_t<std::is_base_of_v<IHeader, HeaderType>>>
+    static Block::CPtr Deserialize(Deserializer& deserializer)
+    {
+        IHeader::CPtr pHeader = HeaderType::Deserialize(deserializer);
+        TxBody body = TxBody::Deserialize(deserializer);
+        return std::make_shared<const Block>(pHeader, std::move(body));
+    }
 
     //
     // Validates all the elements in a block that can be checked without additional data. 

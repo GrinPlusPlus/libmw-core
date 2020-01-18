@@ -60,9 +60,9 @@ public:
         return m_bytes.Serialize(serializer);
     }
 
-    static Commitment Deserialize(ByteBuffer& byteBuffer)
+    static Commitment Deserialize(Deserializer& deserializer)
     {
-        return Commitment(BigInt<SIZE>::Deserialize(byteBuffer));
+        return Commitment(BigInt<SIZE>::Deserialize(deserializer));
     }
 
     virtual json ToJSON() const override final

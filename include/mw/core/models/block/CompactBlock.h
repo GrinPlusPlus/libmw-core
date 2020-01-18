@@ -83,7 +83,7 @@ public:
         return serializer;
     }
 
-    static CompactBlock Deserialize(ByteBuffer& byteBuffer)
+    static CompactBlock Deserialize(Deserializer& deserializer)
     {
         // TODO: Implement
     }

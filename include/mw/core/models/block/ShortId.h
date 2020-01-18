@@ -33,9 +33,9 @@ public:
         const BigInt<32> hashWithNonce = Crypto::Blake2b(serializer.vec());
 
         // extract k0/k1 from the block_hash
-        ByteBuffer byteBuffer(hashWithNonce.vec());
-        const uint64_t k0 = byteBuffer.ReadU64_LE();
-        const uint64_t k1 = byteBuffer.ReadU64_LE();
+        Deserializer deserializer(hashWithNonce.vec());
+        const uint64_t k0 = deserializer.ReadU64_LE();
+        const uint64_t k1 = deserializer.ReadU64_LE();
 
         // SipHash24 our hash using the k0 and k1 keys
         const uint64_t sipHash = Crypto::SipHash24(k0, k1, hash.vec());
@@ -68,7 +68,7 @@ public:
     // Serialization/Deserialization
     //
     virtual Serializer& Serialize(Serializer& serializer) const override final { return m_id.Serialize(serializer); }
-    static ShortId Deserialize(ByteBuffer& byteBuffer) { return BigInt<6>::Deserialize(byteBuffer); }
+    static ShortId Deserialize(Deserializer& deserializer) { return BigInt<6>::Deserialize(deserializer); }
 
     //
     // Traits

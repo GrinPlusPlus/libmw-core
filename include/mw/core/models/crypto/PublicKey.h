@@ -21,9 +21,9 @@ public:
         return m_compressed.Serialize(serializer);
     }
 
-    static PublicKey Deserialize(ByteBuffer& byteBuffer)
+    static PublicKey Deserialize(Deserializer& deserializer)
     {
-        return PublicKey(BigInt<33>::Deserialize(byteBuffer));
+        return PublicKey(BigInt<33>::Deserialize(deserializer));
     }
 
 private:

@@ -42,9 +42,9 @@ public:
         return m_value.Serialize(serializer);
     }
 
-    static secret_key_t<NUM_BYTES> Deserialize(ByteBuffer& byteBuffer)
+    static secret_key_t<NUM_BYTES> Deserialize(Deserializer& deserializer)
     {
-        return secret_key_t<NUM_BYTES>(BigInt<NUM_BYTES>::Deserialize(byteBuffer));
+        return secret_key_t<NUM_BYTES>(BigInt<NUM_BYTES>::Deserialize(deserializer));
     }
 
 private:

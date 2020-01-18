@@ -50,10 +50,10 @@ public:
             .Append<uint16_t>(m_port);
     }
 
-    static SocketAddress Deserialize(ByteBuffer& byteBuffer)
+    static SocketAddress Deserialize(Deserializer& deserializer)
     {
-        IPAddress ipAddress = IPAddress::Deserialize(byteBuffer);
-        const uint16_t port = byteBuffer.ReadU16();
+        IPAddress ipAddress = IPAddress::Deserialize(deserializer);
+        const uint16_t port = deserializer.ReadU16();
 
         return SocketAddress(std::move(ipAddress), port);
     }

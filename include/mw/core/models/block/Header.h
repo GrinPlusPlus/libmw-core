@@ -8,7 +8,7 @@
 #include <mw/core/models/crypto/Hash.h>
 #include <mw/core/traits/Hashable.h>
 #include <mw/core/traits/Printable.h>
-#include <mw/core/traits/Serializable.h>
+#include <mw/core/serialization/Serializer.h>
 #include <mw/core/crypto/Crypto.h>
 
 #include <cstdint>

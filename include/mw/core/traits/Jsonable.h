@@ -18,7 +18,7 @@ namespace Traits
 }
 
 template <typename BasicJsonType,
-    typename T, typename SFINAE = typename std::enable_if<std::is_base_of<Traits::IJsonable, T>::value>::type>
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
 static void to_json(BasicJsonType& j, const T& value) {
     //// we want to use ADL, and call the correct to_json overload
     //using nlohmann::to_json; // this method is called by adl_serializer,
@@ -28,7 +28,7 @@ static void to_json(BasicJsonType& j, const T& value) {
 }
 
 template <typename BasicJsonType,
-    typename T, typename SFINAE = typename std::enable_if<std::is_base_of<Traits::IJsonable, T>::value>::type>
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
 static void from_json(const BasicJsonType& j, T& value) {
     //// same thing here
     //using nlohmann::from_json;

@@ -37,22 +37,22 @@ public:
 
     std::vector<uint32_t> ToKeyIndices(const EBulletProofType& bulletproofType) const
     {
-        ByteBuffer byteBuffer(m_bytes.vec());
+        Deserializer deserializer(m_bytes.vec());
 
         size_t length = 3;
         if (bulletproofType == EBulletProofType::ENHANCED)
         {
-            byteBuffer.ReadU8(); // RESERVED: Always 0
-            byteBuffer.ReadU8(); // Wallet Type
-            byteBuffer.ReadU8(); // Switch Commits - Always true for now.
-            length = byteBuffer.ReadU8();
+            deserializer.ReadU8(); // RESERVED: Always 0
+            deserializer.ReadU8(); // Wallet Type
+            deserializer.ReadU8(); // Switch Commits - Always true for now.
+            length = deserializer.ReadU8();
         }
         else
         {
-            const uint32_t first4Bytes = byteBuffer.ReadU32();
+            const uint32_t first4Bytes = deserializer.ReadU32();
             if (first4Bytes != 0)
             {
-                throw DeserializationEx("Failed to deserialize proof message.");
+                ThrowDeserialization("Failed to deserialize proof message.");
             }
         }
 
@@ -64,7 +64,7 @@ public:
         std::vector<uint32_t> keyIndices(length);
         for (size_t i = 0; i < length; i++)
         {
-            keyIndices[i] = byteBuffer.ReadU32();
+            keyIndices[i] = deserializer.ReadU32();
         }
 
         return keyIndices;

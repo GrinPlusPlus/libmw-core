@@ -51,9 +51,9 @@ public:
         return m_value.Serialize(serializer);
     }
 
-    static BlindingFactor Deserialize(ByteBuffer& byteBuffer)
+    static BlindingFactor Deserialize(Deserializer& deserializer)
     {
-        return BlindingFactor(BigInt<32>::Deserialize(byteBuffer));
+        return BlindingFactor(BigInt<32>::Deserialize(deserializer));
     }
 
     std::string ToHex() const { return m_value.ToHex(); }

@@ -66,10 +66,10 @@ public:
         return serializer;
     }
 
-    static Input Deserialize(ByteBuffer& byteBuffer)
+    static Input Deserialize(Deserializer& deserializer)
     {
-        const EOutputFeatures features = (EOutputFeatures)byteBuffer.ReadU8();
-        Commitment commitment = Commitment::Deserialize(byteBuffer);
+        const EOutputFeatures features = (EOutputFeatures)deserializer.ReadU8();
+        Commitment commitment = Commitment::Deserialize(deserializer);
         return Input(features, std::move(commitment));
     }
 

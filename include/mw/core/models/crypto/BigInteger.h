@@ -7,7 +7,7 @@
 #include <mw/core/util/BitUtil.h>
 #include <mw/core/util/HexUtil.h>
 #include <mw/core/traits/Printable.h>
-#include <mw/core/traits/Serializable.h>
+#include <mw/core/serialization/Serializer.h>
 
 #include <cassert>
 #include <cstdint>
@@ -156,12 +156,12 @@ public:
     //
     virtual Serializer& Serialize(Serializer& serializer) const override final
     {
-        return serializer.AppendByteVector(m_bytes);
+        return serializer.Append(m_bytes);
     }
 
-    static BigInt<NUM_BYTES, ALLOC> Deserialize(ByteBuffer& byteBuffer)
+    static BigInt<NUM_BYTES, ALLOC> Deserialize(Deserializer& deserializer)
     {
-        return BigInt<NUM_BYTES, ALLOC>(byteBuffer.ReadVector(NUM_BYTES));
+        return BigInt<NUM_BYTES, ALLOC>(deserializer.ReadVector(NUM_BYTES));
     }
 
 #ifdef INCLUDE_TEST_MATH

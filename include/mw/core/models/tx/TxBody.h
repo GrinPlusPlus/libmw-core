@@ -71,7 +71,7 @@ public:
         return serializer;
     }
 
-    static TxBody Deserialize(ByteBuffer&)
+    static TxBody Deserialize(Deserializer&)
     {
         // TODO: Implement
     }

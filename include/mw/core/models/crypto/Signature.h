@@ -48,9 +48,9 @@ public:
         return m_bytes.Serialize(serializer);
     }
 
-    static Signature Deserialize(ByteBuffer& byteBuffer)
+    static Signature Deserialize(Deserializer& deserializer)
     {
-        return Signature(BigInt<SIZE>::Deserialize(byteBuffer));
+        return Signature(BigInt<SIZE>::Deserialize(deserializer));
     }
 
     std::string ToHex() const { return m_bytes.ToHex(); }
