@@ -25,6 +25,7 @@ if (WIN32)
 endif()
 
 add_subdirectory(src/common)
+add_subdirectory(src/db)
 add_subdirectory(src/net)
 add_subdirectory(src/crypto)
 
