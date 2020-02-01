@@ -23,7 +23,7 @@ class StringUtil
 {
 public:
     template<typename ... Args>
-    static std::string Format(const std::string& format, const Args& ... args)
+    static std::string Format(const char* format, const Args& ... args)
     {
         return fmt::format(format, ConvertArg(args) ...);
     }
@@ -122,36 +122,43 @@ public:
     }
 
 private:
-    static decltype(auto) ConvertArg(const std::string& x)
+    static std::string ConvertArg(const std::string& x)
     {
         return x;
     }
 
-    static decltype(auto) ConvertArg(const std::wstring& x)
+    static std::string ConvertArg(const char* x)
+    {
+        return std::string(x);
+    }
+
+    static std::string ConvertArg(const std::wstring& x)
     {
         return StringUtil::ToUTF8(x);
     }
 
-    template <class T>
-    static typename std::enable_if<std::is_base_of<Traits::IPrintable, T>::value, std::string>::type ConvertArg(const T& x)
+    static std::string ConvertArg(const Traits::IPrintable& x)
     {
         return x.Format();
     }
 
-    template <class T>
-    static typename std::enable_if<std::is_base_of<Traits::IPrintable, T>::value, std::string>::type ConvertArg(const std::shared_ptr<const T>& x)
+    static std::string ConvertArg(const std::shared_ptr<const Traits::IPrintable>& x)
     {
+        if (x == nullptr)
+        {
+            return "NULL";
+        }
+
         return x->Format();
     }
 
-    template <class T>
-    static typename std::enable_if<std::is_base_of<Traits::IPrintable, T>::value, std::string>::type ConvertArg(const std::shared_ptr<T>& x)
+    static std::string ConvertArg(const std::exception& e)
     {
-        return x->Format();
+        return std::string(e.what());
     }
 
-    template <class T>
-    static typename std::enable_if<!std::is_base_of<Traits::IPrintable, T>::value, T>::type ConvertArg(const T& x)
+    template <class T, typename SFINAE = std::enable_if_t<std::is_fundamental_v<T>>>
+    static decltype(auto) ConvertArg(const T& x)
     {
         return x;
     }
