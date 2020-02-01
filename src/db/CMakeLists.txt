@@ -1,7 +1,7 @@
 set(TARGET_NAME DATABASE)
 
 file(GLOB SOURCE_CODE
-	"common/*.cpp"
+	"*.cpp"
 )
 
 #if(GRINPP_STATIC)

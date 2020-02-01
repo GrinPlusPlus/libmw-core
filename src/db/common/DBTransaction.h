@@ -32,7 +32,7 @@ public:
             serializer.Append(entry.item);
 
             m_batch.Put(leveldb::Slice(key), leveldb::Slice((const char*)serializer.data(), serializer.size()));
-            m_added[key] = entry;
+            m_added.insert({ key, entry.item });
         }
 
         return *this;
@@ -40,12 +40,16 @@ public:
 
     template<typename T,
         typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::ISerializable, T>>>
-    std::unique_ptr<DBEntry<T>> Get(const DBTable& table, const std::string& key) const noexcept
+    std::unique_ptr<DBEntry<T>> Get(const Context::CPtr& pContext, const DBTable& table, const std::string& key) const noexcept
     {
         auto iter = m_added.find(table.BuildKey(key));
         if (iter != m_added.cend())
         {
-            return std::make_unique<DBEntry<T>>(iter->second);
+            auto pObject = std::dynamic_pointer_cast<const T>(iter->second);
+            if (pObject != nullptr)
+            {
+                return std::make_unique<DBEntry<T>>(iter->first, pObject);
+            }
         }
 
         std::string itemStr;
@@ -53,7 +57,7 @@ public:
         if (status.ok())
         {
             Deserializer deserializer(std::vector<uint8_t>(itemStr.cbegin(), itemStr.cend()));
-            return std::make_unique<DBEntry<T>>(key, std::make_shared<T>(T::Deserialize(deserializer)));
+            return std::make_unique<DBEntry<T>>(key, T::Deserialize(pContext, deserializer));
         }
 
         return nullptr;
@@ -71,5 +75,5 @@ public:
 private:
     leveldb::DB* m_pDB;
     leveldb::WriteBatch m_batch;
-    std::unordered_map<std::string, DBEntry<Traits::ISerializable>> m_added;
+    std::unordered_map<std::string, std::shared_ptr<const Traits::ISerializable>> m_added;
 };

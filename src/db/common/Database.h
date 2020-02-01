@@ -5,6 +5,7 @@
 #include "DBEntry.h"
 #include "DBLogger.h"
 
+#include <mw/core/Context.h>
 #include <mw/core/file/FilePath.h>
 #include <mw/core/traits/Batchable.h>
 #include <mw/core/common/Lock.h>
@@ -20,7 +21,7 @@ class Database : public Traits::IBatchable
 public:
     using Ptr = std::shared_ptr<Database>;
 
-    static Database::Ptr Open(const FilePath& path)
+    static Database::Ptr Open(const Context::CPtr& pContext, const FilePath& path)
     {
         path.GetParent().CreateDirIfMissing();
 
@@ -41,7 +42,7 @@ public:
             ThrowDatabase_F("Open failed with status {}", status.ToString());
         }
 
-        return std::shared_ptr<Database>(new Database(std::move(options), pDB));
+        return std::shared_ptr<Database>(new Database(pContext, std::move(options), pDB));
     }
 
     virtual ~Database()
@@ -60,7 +61,7 @@ public:
     {
         if (m_pTx != nullptr)
         {
-            return m_pTx->Get(table, key);
+            return m_pTx->Get<T>(m_pContext, table, key);
         }
 
         std::string itemStr;
@@ -68,7 +69,7 @@ public:
         if (status.ok())
         {
             Deserializer deserializer(std::vector<uint8_t>(itemStr.cbegin(), itemStr.cend()));
-            return std::make_unique<DBEntry<T>>(key, std::make_shared<T>(T::Deserialize(deserializer)));
+            return std::make_unique<DBEntry<T>>(key, T::Deserialize(m_pContext, deserializer));
         }
 
         return nullptr;
@@ -118,9 +119,10 @@ public:
     }
     
 private:
-    Database(leveldb::Options&& options, leveldb::DB* pDB) noexcept
-        : m_options(std::move(options)), m_pDB(pDB), m_pTx(nullptr) { }
+    Database(const Context::CPtr& pContext, leveldb::Options&& options, leveldb::DB* pDB) noexcept
+        : m_pContext(pContext), m_options(std::move(options)), m_pDB(pDB), m_pTx(nullptr) { }
 
+    Context::CPtr m_pContext;
     leveldb::Options m_options;
     leveldb::DB* m_pDB;
     DBTransaction::Ptr m_pTx;

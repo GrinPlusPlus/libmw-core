@@ -14,6 +14,7 @@ namespace Traits
         IBatchable() : m_dirty(false) { }
         virtual ~IBatchable() = default;
 
+        // TODO: take in std::error_code and make these noexcept
         virtual void Commit() = 0;
         virtual void Rollback() = 0;
 

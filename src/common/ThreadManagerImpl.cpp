@@ -9,7 +9,7 @@ ThreadManager& ThreadManager::GetInstance()
     return threadManager;
 }
 
-std::string ThreadManager::GetCurrentThreadName() const
+std::string ThreadManager::GetCurrentThreadName() const noexcept
 {
     std::shared_lock<std::shared_mutex> readLock(m_threadNamesMutex);
 

@@ -11,7 +11,7 @@ public:
     static ThreadManager& GetInstance();
 
     // Future: Implement a CreateThread method that takes the name, function, and parameters.
-    std::string GetCurrentThreadName() const;
+    std::string GetCurrentThreadName() const noexcept;
     void SetThreadName(const std::thread::id& threadId, const std::string& threadName);
     void SetCurrentThreadName(const std::string& threadName);
 
