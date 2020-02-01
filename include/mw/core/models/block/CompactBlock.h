@@ -83,9 +83,39 @@ public:
         return serializer;
     }
 
-    static CompactBlock Deserialize(Deserializer& deserializer)
+    static CompactBlock Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
     {
-        // TODO: Implement
+        IHeader::CPtr pHeader = pContext->GetHeaderFactory().Deserialize(pContext, deserializer);
+        const uint64_t nonce = deserializer.ReadU64();
+        const uint64_t numOutputs = deserializer.ReadU64();
+        const uint64_t numKernels = deserializer.ReadU64();
+        const uint64_t numShortIds = deserializer.ReadU64();
+
+        // Deserialize outputs
+        std::vector<Output> outputs;
+        outputs.reserve(numOutputs);
+        for (uint64_t i = 0; i < numOutputs; i++)
+        {
+            outputs.emplace_back(Output::Deserialize(pContext, deserializer));
+        }
+
+        // Deserialize kernels
+        std::vector<Kernel> kernels;
+        kernels.reserve(numKernels);
+        for (uint64_t i = 0; i < numKernels; i++)
+        {
+            kernels.emplace_back(Kernel::Deserialize(pContext, deserializer));
+        }
+
+        // Deserialize outputs
+        std::vector<ShortId> shortIds;
+        shortIds.reserve(numShortIds);
+        for (uint64_t i = 0; i < numShortIds; i++)
+        {
+            shortIds.emplace_back(ShortId::Deserialize(pContext, deserializer));
+        }
+
+        return CompactBlock(pHeader, nonce, std::move(outputs), std::move(kernels), std::move(shortIds));
     }
 
     //

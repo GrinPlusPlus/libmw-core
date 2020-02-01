@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/crypto/BigInteger.h>
 #include <mw/core/traits/Serializable.h>
 #include <mw/core/traits/Jsonable.h>
@@ -71,9 +72,37 @@ public:
         return serializer;
     }
 
-    static TxBody Deserialize(Deserializer&)
+    static TxBody Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
     {
-        // TODO: Implement
+        const uint64_t numInputs = deserializer.ReadU64();
+        const uint64_t numOutputs = deserializer.ReadU64();
+        const uint64_t numKernels = deserializer.ReadU64();
+
+        // Deserialize outputs
+        std::vector<Input> inputs;
+        inputs.reserve(numInputs);
+        for (uint64_t i = 0; i < numInputs; i++)
+        {
+            inputs.emplace_back(Input::Deserialize(pContext, deserializer));
+        }
+
+        // Deserialize outputs
+        std::vector<Output> outputs;
+        outputs.reserve(numOutputs);
+        for (uint64_t i = 0; i < numOutputs; i++)
+        {
+            outputs.emplace_back(Output::Deserialize(pContext, deserializer));
+        }
+
+        // Deserialize kernels
+        std::vector<Kernel> kernels;
+        kernels.reserve(numKernels);
+        for (uint64_t i = 0; i < numKernels; i++)
+        {
+            kernels.emplace_back(Kernel::Deserialize(pContext, deserializer));
+        }
+
+        return TxBody(std::move(inputs), std::move(outputs), std::move(kernels));
     }
 
     virtual json ToJSON() const override final

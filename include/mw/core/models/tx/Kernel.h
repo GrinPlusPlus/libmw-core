@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/crypto/Crypto.h>
 #include <mw/core/traits/Committed.h>
 #include <mw/core/traits/Hashable.h>
@@ -97,7 +98,7 @@ public:
         return serializer;
     }
 
-    static Kernel Deserialize(Deserializer&)
+    static Kernel Deserialize(const Context::CPtr&, Deserializer&)
     {
         // TODO: Implement
         return Kernel();

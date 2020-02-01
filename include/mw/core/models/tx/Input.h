@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/tx/Features.h>
 #include <mw/core/crypto/Crypto.h>
 #include <mw/core/traits/Committed.h>
@@ -66,7 +67,7 @@ public:
         return serializer;
     }
 
-    static Input Deserialize(Deserializer& deserializer)
+    static Input Deserialize(const Context::CPtr&, Deserializer& deserializer)
     {
         const EOutputFeatures features = (EOutputFeatures)deserializer.ReadU8();
         Commitment commitment = Commitment::Deserialize(deserializer);

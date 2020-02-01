@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/crypto/BigInteger.h>
 #include <mw/core/traits/Printable.h>
 #include <mw/core/traits/Serializable.h>
@@ -68,7 +69,7 @@ public:
     // Serialization/Deserialization
     //
     virtual Serializer& Serialize(Serializer& serializer) const override final { return m_id.Serialize(serializer); }
-    static ShortId Deserialize(Deserializer& deserializer) { return BigInt<6>::Deserialize(deserializer); }
+    static ShortId Deserialize(const Context::CPtr&, Deserializer& deserializer) { return BigInt<6>::Deserialize(deserializer); }
 
     //
     // Traits

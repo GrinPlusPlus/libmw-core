@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/tx/Features.h>
 #include <mw/core/models/crypto/RangeProof.h>
 #include <mw/core/crypto/Crypto.h>
@@ -69,7 +70,7 @@ public:
         return serializer;
     }
 
-    static Output Deserialize(Deserializer& deserializer)
+    static Output Deserialize(const Context::CPtr&, Deserializer& deserializer)
     {
         const EOutputFeatures features = (EOutputFeatures)deserializer.ReadU8();
         Commitment commitment = Commitment::Deserialize(deserializer);

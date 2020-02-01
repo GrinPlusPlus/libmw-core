@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/crypto/BlindingFactor.h>
 #include <mw/core/models/crypto/Hash.h>
 #include <mw/core/traits/Hashable.h>
@@ -13,9 +14,6 @@
 
 #include <cstdint>
 #include <memory>
-
-// Forward Declarations
-class NodeContext;
 
 class IHeader :
     public Traits::IPrintable,
@@ -82,13 +80,21 @@ public:
     //
     // Validation
     //
-    virtual void Validate(const NodeContext& context) const = 0;
+    virtual void Validate(const Context& context) const = 0;
 
     //
     // Traits
     //
     virtual Hash GetHash() const override final { return m_hash; }
     virtual std::string Format() const { return GetHash().ToHex(); }
+
+    //
+    // Serialization/Deserialization
+    //
+    static IHeader::CPtr Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
+    {
+        return pContext->GetHeaderFactory().Deserialize(pContext, deserializer);
+    }
 
 protected:
     mutable Hash m_hash;

@@ -4,6 +4,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <mw/core/Context.h>
 #include <mw/core/models/block/Header.h>
 #include <mw/core/models/tx/TxBody.h>
 #include <mw/core/traits/Printable.h>
@@ -21,7 +22,7 @@ public:
     //
     // Constructors
     //
-    Block(IHeader::CPtr pHeader, TxBody&& body)
+    Block(const IHeader::CPtr& pHeader, TxBody&& body)
         : m_pHeader(pHeader), m_body(std::move(body)), m_validated(false)
     {
 
@@ -63,12 +64,10 @@ public:
         return serializer.Append(m_pHeader).Append(m_body);
     }
 
-    template <typename HeaderType,
-        typename SFINAE = typename std::enable_if_t<std::is_base_of_v<IHeader, HeaderType>>>
-    static Block::CPtr Deserialize(Deserializer& deserializer)
+    static Block::CPtr Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
     {
-        IHeader::CPtr pHeader = HeaderType::Deserialize(deserializer);
-        TxBody body = TxBody::Deserialize(deserializer);
+        IHeader::CPtr pHeader = pContext->GetHeaderFactory().Deserialize(pContext, deserializer);
+        TxBody body = TxBody::Deserialize(pContext, deserializer);
         return std::make_shared<const Block>(pHeader, std::move(body));
     }
 
@@ -76,7 +75,7 @@ public:
     // Validates all the elements in a block that can be checked without additional data. 
     // Includes commitment sums, kernels, reward, etc.
     //
-    virtual void Validate() const = 0;
+    virtual void Validate() const { }
 
     //
     // Traits
