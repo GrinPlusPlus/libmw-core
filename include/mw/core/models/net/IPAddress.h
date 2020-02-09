@@ -86,7 +86,7 @@ public:
 
     static IPAddress Deserialize(Deserializer& deserializer)
     {
-        const uint8_t ipAddressFamily = deserializer.ReadU8();
+        const uint8_t ipAddressFamily = deserializer.Read<uint8_t>();
         if (ipAddressFamily == 0)
         {
             return CreateV4(deserializer.ReadArray<4>());

@@ -72,7 +72,7 @@ public:
 
     static Output Deserialize(const Context::CPtr&, Deserializer& deserializer)
     {
-        const EOutputFeatures features = (EOutputFeatures)deserializer.ReadU8();
+        const EOutputFeatures features = (EOutputFeatures)deserializer.Read<uint8_t>();
         Commitment commitment = Commitment::Deserialize(deserializer);
         RangeProof proof = RangeProof::Deserialize(deserializer);
         return Output(features, std::move(commitment), std::move(proof));

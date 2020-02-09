@@ -198,7 +198,7 @@ SOCKS::Destination Socks5Proxy::ReadDestination(const SOCKS::Atyp& type)
     }
 
     std::vector<uint8_t> portBytes = m_pSocket->Read(2, SOCKS_TIMEOUT);
-    destination.port = Deserializer(std::move(portBytes)).ReadU16();
+    destination.port = Deserializer(std::move(portBytes)).Read<uint16_t>();
 
     return destination;
 }

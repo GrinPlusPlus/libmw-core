@@ -53,7 +53,7 @@ public:
     static SocketAddress Deserialize(Deserializer& deserializer)
     {
         IPAddress ipAddress = IPAddress::Deserialize(deserializer);
-        const uint16_t port = deserializer.ReadU16();
+        const uint16_t port = deserializer.Read<uint16_t>();
 
         return SocketAddress(std::move(ipAddress), port);
     }

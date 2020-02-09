@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <array>
 #include <algorithm>
 
 class Serializer
@@ -24,7 +25,7 @@ public:
     Serializer& Append(const T& t)
     {
         std::vector<uint8_t> temp(sizeof(T));
-        memcpy(&temp[0], &t, sizeof(T));
+        memcpy(temp.data(), &t, sizeof(T));
 
         if (EndianUtil::IsBigEndian())
         {
@@ -42,7 +43,7 @@ public:
     Serializer& AppendLE(const T& t)
     {
         std::vector<uint8_t> temp(sizeof(T));
-        memcpy(&temp[0], &t, sizeof(T));
+        memcpy(temp.data(), &t, sizeof(T));
 
         if (EndianUtil::IsBigEndian())
         {
@@ -69,12 +70,17 @@ public:
         return *this;
     }
 
+    // TODO: Should we care about unicode, where chars are larger than 1 byte?
     Serializer& Append(const std::string& varString)
     {
-        size_t stringLength = varString.length();
-        Append<uint64_t>(stringLength);
+        Append<uint64_t>(varString.length());
         m_serialized.insert(m_serialized.end(), varString.cbegin(), varString.cend());
         return *this;
+    }
+
+    Serializer& Append(const char* str)
+    {
+        return Append(std::string(str));
     }
 
     Serializer& Append(const Traits::ISerializable& serializable)

@@ -11,7 +11,7 @@ file(GLOB SOURCE_CODE
 #	add_library(${TARGET_NAME} SHARED ${SOURCE_CODE})
 #endif(GRINPP_STATIC)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE MW_CRYPTO)
+target_compile_definitions(${TARGET_NAME} PRIVATE MW_NET)
 
 add_dependencies(${TARGET_NAME} Common)
 target_link_libraries(${TARGET_NAME} PUBLIC Common)

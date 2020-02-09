@@ -59,7 +59,7 @@ public:
 
     static RangeProof Deserialize(Deserializer& deserializer)
     {
-        const uint64_t proofSize = deserializer.ReadU64();
+        const uint64_t proofSize = deserializer.Read<uint64_t>();
         if (proofSize > MAX_SIZE)
         {
             ThrowDeserialization("RangeProof is larger than MAX_SIZE");

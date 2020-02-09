@@ -74,9 +74,9 @@ public:
 
     static TxBody Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
     {
-        const uint64_t numInputs = deserializer.ReadU64();
-        const uint64_t numOutputs = deserializer.ReadU64();
-        const uint64_t numKernels = deserializer.ReadU64();
+        const uint64_t numInputs = deserializer.Read<uint64_t>();
+        const uint64_t numOutputs = deserializer.Read<uint64_t>();
+        const uint64_t numKernels = deserializer.Read<uint64_t>();
 
         // Deserialize outputs
         std::vector<Input> inputs;

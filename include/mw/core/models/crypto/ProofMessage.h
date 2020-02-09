@@ -42,14 +42,14 @@ public:
         size_t length = 3;
         if (bulletproofType == EBulletProofType::ENHANCED)
         {
-            deserializer.ReadU8(); // RESERVED: Always 0
-            deserializer.ReadU8(); // Wallet Type
-            deserializer.ReadU8(); // Switch Commits - Always true for now.
-            length = deserializer.ReadU8();
+            deserializer.Read<uint8_t>(); // RESERVED: Always 0
+            deserializer.Read<uint8_t>(); // Wallet Type
+            deserializer.Read<uint8_t>(); // Switch Commits - Always true for now.
+            length = deserializer.Read<uint8_t>();
         }
         else
         {
-            const uint32_t first4Bytes = deserializer.ReadU32();
+            const uint32_t first4Bytes = deserializer.Read<uint32_t>();
             if (first4Bytes != 0)
             {
                 ThrowDeserialization("Failed to deserialize proof message.");
@@ -64,7 +64,7 @@ public:
         std::vector<uint32_t> keyIndices(length);
         for (size_t i = 0; i < length; i++)
         {
-            keyIndices[i] = deserializer.ReadU32();
+            keyIndices[i] = deserializer.Read<uint32_t>();
         }
 
         return keyIndices;

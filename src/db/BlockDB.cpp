@@ -115,7 +115,7 @@ Block::CPtr BlockDB::GetBlockByHeight(const uint64_t height) const noexcept
 
 void BlockDB::AddBlock(const Block::CPtr& pBlock)
 {
-    LOG_TRACE("Saving block {}", pBlock);
+    LOG_TRACE_F("Saving block {}", pBlock);
 
     std::vector<DBEntry<Block>> entries({ BlockDB::ToBlockEntry(pBlock) });
     m_pDatabase->Put<Block>(BLOCK_TABLE, entries);

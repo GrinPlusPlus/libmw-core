@@ -20,5 +20,10 @@ namespace Traits
         // Appends serialized bytes to Serializer
         //
         virtual Serializer& Serialize(Serializer& serializer) const = 0;
+
+        //
+        // Serializes object into a byte vector.
+        //
+        std::vector<uint8_t> Serialize() const;
     };
 }

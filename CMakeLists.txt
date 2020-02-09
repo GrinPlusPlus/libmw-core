@@ -28,6 +28,7 @@ add_subdirectory(src/common)
 add_subdirectory(src/db)
 add_subdirectory(src/net)
 add_subdirectory(src/crypto)
+add_subdirectory(src/traits)
 
 if (MSVC)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
