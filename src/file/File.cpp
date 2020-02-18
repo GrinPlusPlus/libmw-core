@@ -37,7 +37,6 @@ void File::Truncate(const uint64_t size)
     }
 }
 
-
 void File::Rename(const std::string& filename)
 {
     if (m_path.IsDirectory())
@@ -92,7 +91,7 @@ std::vector<uint8_t> File::ReadBytes() const
     return bytes;
 }
 
-size_t File::GetFileSize() const
+size_t File::GetSize() const
 {
     std::error_code ec;
     const size_t size = (size_t)fs::file_size(m_path, ec);

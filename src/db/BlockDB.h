@@ -34,10 +34,10 @@ public:
 	//
 	virtual void AddBlock(const Block::CPtr& pBlock) override final;
 
-	virtual void Commit() override final { m_pDatabase->Commit(); }
-	virtual void Rollback() override final { m_pDatabase->Rollback(); }
-	virtual void OnInitWrite() override final { m_pDatabase->OnInitWrite(); }
-	virtual void OnEndWrite() override final { m_pDatabase->OnEndWrite(); }
+	virtual void Commit() override final { return m_pDatabase->Commit(); }
+	virtual void Rollback() noexcept override final { return m_pDatabase->Rollback(); }
+	virtual void OnInitWrite() noexcept override final { m_pDatabase->OnInitWrite(); }
+	virtual void OnEndWrite() noexcept override final { m_pDatabase->OnEndWrite(); }
 
 private:
 	static DBEntry<IHeader> ToHeaderEntry(const IHeader::CPtr& pHeader)

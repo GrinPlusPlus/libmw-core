@@ -14,6 +14,7 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(WITH_GFLAGS OFF)
+set(MW_STATIC TRUE)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
@@ -22,6 +23,10 @@ include(deps/dependencies.cmake)
 
 if (WIN32)
     add_definitions(-DMW_ENABLE_WSTRING -DUNICODE -DNOMINMAX)
+endif()
+
+if (MW_STATIC)
+    add_definitions(-DMW_STATIC)
 endif()
 
 add_subdirectory(src/common)

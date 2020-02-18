@@ -8,11 +8,11 @@ file(GLOB SOURCE_CODE
 	"PublicKeys.cpp"
 )
 
-#if(GRINPP_STATIC)
+if(MW_STATIC)
 	add_library(${TARGET_NAME} STATIC ${SOURCE_CODE})
-#else(GRINPP_STATIC)
-#	add_library(${TARGET_NAME} SHARED ${SOURCE_CODE})
-#endif(GRINPP_STATIC)
+else(MW_STATIC)
+	add_library(${TARGET_NAME} SHARED ${SOURCE_CODE})
+endif(MW_STATIC)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE MW_CRYPTO)
 

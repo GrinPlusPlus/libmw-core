@@ -14,18 +14,17 @@ namespace Traits
         IBatchable() : m_dirty(false) { }
         virtual ~IBatchable() = default;
 
-        // TODO: take in std::error_code and make these noexcept
         virtual void Commit() = 0;
-        virtual void Rollback() = 0;
+        virtual void Rollback() noexcept = 0;
 
         // This can be overridden
-        virtual void OnInitWrite() { }
+        virtual void OnInitWrite() noexcept { }
 
         // This can be overridden
-        virtual void OnEndWrite() { }
+        virtual void OnEndWrite() noexcept { }
 
-        bool IsDirty() const { return m_dirty; }
-        void SetDirty(const bool dirty) { m_dirty = dirty; }
+        bool IsDirty() const noexcept { return m_dirty; }
+        void SetDirty(const bool dirty) noexcept { m_dirty = dirty; }
 
     private:
         bool m_dirty;

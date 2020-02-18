@@ -1,9 +1,9 @@
 #pragma once
 
-//#ifdef GRINPP_STATIC
+#ifdef MW_STATIC
     #define EXPORT
     #define IMPORT
-/*#else
+#else
     #if defined(_MSC_VER)
         //  Microsoft 
         #define EXPORT __declspec(dllexport)
@@ -16,4 +16,4 @@
         #define EXPORT
         #define IMPORT
     #endif
-#endif*/
+#endif

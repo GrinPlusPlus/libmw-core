@@ -14,7 +14,7 @@ public:
     void Truncate(const uint64_t size);
     void Rename(const std::string& filename);
     std::vector<uint8_t> ReadBytes() const;
-    size_t GetFileSize() const;
+    size_t GetSize() const;
 
     //
     // Traits
