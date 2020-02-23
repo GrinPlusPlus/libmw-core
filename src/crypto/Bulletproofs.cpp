@@ -163,7 +163,7 @@ std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(
             return std::make_unique<RewoundProof>(RewoundProof(
                 value, 
                 std::make_unique<SecretKey>(std::move(blindingFactor)),
-                ProofMessage(std::move(message))
+                ProofMessage(BigInt<20>(std::move(message)))
             ));
         }
     }

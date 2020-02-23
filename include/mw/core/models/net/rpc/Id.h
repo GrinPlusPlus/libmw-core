@@ -28,28 +28,26 @@ namespace RPC
         int GetInt() const noexcept { return m_intId; }
         const std::string& GetString() const noexcept { return m_strId; }
 
-        static Id FromJSON(const json& parent)
+        static Id FromJSON(const Json& parent)
         {
-            Json parser(parent);
-
-            auto iter = parent.find("id");
-            if (iter == parent.end() || iter->is_null())
+            auto idOpt = parent.Get<json>("id");
+            if (!idOpt.has_value() || idOpt.value().is_null())
             {
                 return CreateNull();
             }
-            else if (iter->is_number())
+            else if (idOpt.value().is_number())
             {
-                return Create(iter->get<int>());
+                return Create(idOpt.value().get<int>());
             }
-            else if (iter->is_string())
+            else if (idOpt.value().is_string())
             {
-                return Create(iter->get<std::string>());
+                return Create(idOpt.value().get<std::string>());
             }
 
             ThrowNetwork("Failed to parse Id");
         }
 
-        virtual json ToJSON() const override final
+        virtual json ToJSON() const noexcept override final
         {
             if (m_type == value_t::null)
             {

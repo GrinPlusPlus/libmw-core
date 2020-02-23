@@ -58,24 +58,24 @@ public:
     //
     ShortId& operator=(const ShortId& other) = default;
     ShortId& operator=(ShortId&& other) noexcept = default;
-    bool operator<(const ShortId& shortId) const { return GetHash() < shortId.GetHash(); }
+    bool operator<(const ShortId& shortId) const noexcept { return GetHash() < shortId.GetHash(); }
 
     //
     // Getters
     //
-    const BigInt<6>& GetId() const { return m_id; }
+    const BigInt<6>& GetId() const noexcept { return m_id; }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final { return m_id.Serialize(serializer); }
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final { return m_id.Serialize(serializer); }
     static ShortId Deserialize(const Context::CPtr&, Deserializer& deserializer) { return BigInt<6>::Deserialize(deserializer); }
 
     //
     // Traits
     //
     virtual std::string Format() const override final { return m_id.Format(); }
-    virtual Hash GetHash() const override final { return Crypto::Blake2b(m_id.vec()); }
+    virtual Hash GetHash() const noexcept override final { return Crypto::Blake2b(m_id.vec()); }
 
 private:
     BigInt<6> m_id;

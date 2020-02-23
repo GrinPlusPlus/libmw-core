@@ -4,7 +4,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <mw/core/serialization/Json.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace Traits
 {
@@ -13,25 +15,46 @@ namespace Traits
     public:
         virtual ~IJsonable() = default;
 
-        virtual json ToJSON() const = 0;
+        virtual json ToJSON() const noexcept = 0;
     };
 }
 
 template <typename BasicJsonType,
     typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
 static void to_json(BasicJsonType& j, const T& value) {
-    //// we want to use ADL, and call the correct to_json overload
-    //using nlohmann::to_json; // this method is called by adl_serializer,
-    //                         // this is where the magic happens
-    //to_json(j, value);
     j = value.ToJSON();
 }
 
 template <typename BasicJsonType,
     typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
-static void from_json(const BasicJsonType& j, T& value) {
-    //// same thing here
-    //using nlohmann::from_json;
-
-    value = T::FromJSON(j);
+static void to_json(BasicJsonType& j, const std::shared_ptr<const T>& value) {
+    assert(value != nullptr);
+    j = value->ToJSON();
 }
+
+template <typename BasicJsonType,
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
+static void to_json(BasicJsonType& j, const std::unique_ptr<const T>& value) {
+    assert(value != nullptr);
+    j = value->ToJSON();
+}
+
+template <typename BasicJsonType,
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
+static void from_json(const BasicJsonType& j, T& value) {
+    value = T::FromJSON(Json(j));
+}
+
+template <typename BasicJsonType,
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
+static void from_json(const BasicJsonType& j, std::shared_ptr<const T>& value) {
+    value = T::FromJSON(Json(j));
+}
+
+template <typename BasicJsonType,
+    typename T, typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::IJsonable, T>>>
+static void from_json(const BasicJsonType& j, std::unique_ptr<const T>& value) {
+    value = T::FromJSON(Json(j));
+}
+
+#include <mw/core/serialization/Json.h>

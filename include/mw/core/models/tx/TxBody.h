@@ -10,7 +10,9 @@
 #include <mw/core/traits/Jsonable.h>
 #include <mw/core/models/tx/Input.h>
 #include <mw/core/models/tx/Output.h>
-#include <mw/core/models/tx/Kernel.h>
+#include <mw/core/models/tx/IKernel.h>
+#include <mw/core/consensus/CutThroughVerifier.h>
+#include <mw/core/consensus/KernelSignatureValidator.h>
 
 #include <memory>
 #include <vector>
@@ -28,7 +30,7 @@ public:
     //
     // Constructors
     //
-    TxBody(std::vector<Input>&& inputs, std::vector<Output>&& outputs, std::vector<Kernel>&& kernels)
+    TxBody(std::vector<Input>&& inputs, std::vector<Output>&& outputs, std::vector<IKernel::CPtr>&& kernels)
         : m_inputs(std::move(inputs)), m_outputs(std::move(outputs)), m_kernels(std::move(kernels))
     {
 
@@ -51,23 +53,35 @@ public:
     //
     // Getters
     //
-    const std::vector<Input>& GetInputs() const { return m_inputs; }
-    const std::vector<Output>& GetOutputs() const { return m_outputs; }
-    const std::vector<Kernel>& GetKernels() const { return m_kernels; }
+    const std::vector<Input>& GetInputs() const noexcept { return m_inputs; }
+    const std::vector<Output>& GetOutputs() const noexcept { return m_outputs; }
+    const std::vector<IKernel::CPtr>& GetKernels() const noexcept { return m_kernels; }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         serializer
             .Append<uint64_t>(m_inputs.size())
             .Append<uint64_t>(m_outputs.size())
             .Append<uint64_t>(m_kernels.size());
 
-        std::for_each(m_inputs.cbegin(), m_inputs.cend(), [&serializer](const auto& input) { input.Serialize(serializer); });
-        std::for_each(m_outputs.cbegin(), m_outputs.cend(), [&serializer](const auto& output) { output.Serialize(serializer); });
-        std::for_each(m_kernels.cbegin(), m_kernels.cend(), [&serializer](const auto& kernel) { kernel.Serialize(serializer); });
+        std::for_each(
+            m_inputs.cbegin(),
+            m_inputs.cend(),
+            [&serializer](const auto& input) { input.Serialize(serializer); }
+        );
+        std::for_each(
+            m_outputs.cbegin(),
+            m_outputs.cend(),
+            [&serializer](const auto& output) { output.Serialize(serializer); }
+        );
+        std::for_each(
+            m_kernels.cbegin(),
+            m_kernels.cend(),
+            [&serializer](const auto& pKernel) { pKernel->Serialize(serializer); }
+        );
 
         return serializer;
     }
@@ -95,17 +109,17 @@ public:
         }
 
         // Deserialize kernels
-        std::vector<Kernel> kernels;
+        std::vector<IKernel::CPtr> kernels;
         kernels.reserve(numKernels);
         for (uint64_t i = 0; i < numKernels; i++)
         {
-            kernels.emplace_back(Kernel::Deserialize(pContext, deserializer));
+            kernels.emplace_back(IKernel::Deserialize(pContext, deserializer));
         }
 
         return TxBody(std::move(inputs), std::move(outputs), std::move(kernels));
     }
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json({
             {"inputs", m_inputs},
@@ -114,9 +128,32 @@ public:
         });
     }
 
-    static TxBody FromJSON(const json&)
+    static TxBody FromJSON(const Json&)
     {
         // TODO: Implement
+    }
+
+    void Validate() const
+    {
+        CutThroughVerifier::VerifyCutThrough(m_inputs, m_outputs);
+        KernelSignatureValidator::VerifyKernelSignatures(m_kernels);
+
+        // TODO: Validate Weight
+        // TODO: Verify Sorted
+
+        //
+        // Verify RangeProofs
+        //
+        std::vector<std::pair<Commitment, RangeProof>> rangeProofs;
+        std::transform(
+            m_outputs.cbegin(), m_outputs.cend(),
+            std::back_inserter(rangeProofs),
+            [](const Output& output) { return std::make_pair(output.GetCommitment(), output.GetRangeProof()); }
+        );
+        if (!Crypto::VerifyRangeProofs(rangeProofs))
+        {
+            ThrowValidation(EConsensusError::BULLETPROOF);
+        }
     }
 
 private:
@@ -127,5 +164,5 @@ private:
     std::vector<Output> m_outputs;
 
     // List of kernels that make up this transaction (usually a single kernel).
-    std::vector<Kernel> m_kernels;
+    std::vector<IKernel::CPtr> m_kernels;
 };

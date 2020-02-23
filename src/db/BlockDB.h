@@ -26,13 +26,13 @@ public:
 	//
 	// Retrieve Blocks
 	//
-	virtual Block::CPtr GetBlockByHash(const Hash& hash) const noexcept override final;
-	virtual Block::CPtr GetBlockByHeight(const uint64_t height) const noexcept override final;
+	virtual IBlock::CPtr GetBlockByHash(const Hash& hash) const noexcept override final;
+	virtual IBlock::CPtr GetBlockByHeight(const uint64_t height) const noexcept override final;
 
 	//
 	// Save Blocks
 	//
-	virtual void AddBlock(const Block::CPtr& pBlock) override final;
+	virtual void AddBlock(const IBlock::CPtr& pBlock) override final;
 
 	virtual void Commit() override final { return m_pDatabase->Commit(); }
 	virtual void Rollback() noexcept override final { return m_pDatabase->Rollback(); }
@@ -45,9 +45,9 @@ private:
 		return DBEntry<IHeader>(pHeader->GetHash().ToHex(), pHeader);
 	}
 
-	static DBEntry<Block> ToBlockEntry(const Block::CPtr& pBlock)
+	static DBEntry<IBlock> ToBlockEntry(const IBlock::CPtr& pBlock)
 	{
-		return DBEntry<Block>(pBlock->GetHash().ToHex(), pBlock);
+		return DBEntry<IBlock>(pBlock->GetHash().ToHex(), pBlock);
 	}
 
 	Database::Ptr m_pDatabase;

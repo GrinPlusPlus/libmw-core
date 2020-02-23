@@ -28,21 +28,20 @@ namespace RPC
         const std::string& GetMsg() const noexcept { return m_message; }
         const tl::optional<json>& GetData() const noexcept { return m_data; }
 
-        static Error FromJSON(const json& error)
+        static Error FromJSON(const Json& error)
         {
-            Json parser(error);
-            auto codeOpt = parser.Get<int>("code");
-            auto messageOpt = parser.Get<std::string>("message");
-            tl::optional<json> dataOpt = parser.Get<json>("data");
+            auto codeOpt = error.Get<int>("code");
+            auto messageOpt = error.Get<std::string>("message");
+            tl::optional<json> dataOpt = error.Get<json>("data");
             if (!codeOpt.has_value() || !messageOpt.has_value())
             {
-                ThrowNetwork_F("Invalid json: {}", parser);
+                ThrowNetwork_F("Invalid json: {}", error);
             }
 
             return Error(codeOpt.value(), messageOpt.value(), dataOpt);
         }
 
-        virtual json ToJSON() const override final
+        virtual json ToJSON() const noexcept override final
         {
             json json({
                 {"code", m_code},

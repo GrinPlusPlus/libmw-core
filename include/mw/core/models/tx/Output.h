@@ -26,8 +26,8 @@ public:
     //
     // Constructors
     //
-    Output(const EOutputFeatures features, Commitment&& commitment, RangeProof&& proof)
-        : m_features(features), m_commitment(std::move(commitment)), m_proof(std::move(proof))
+    Output(const EOutputFeatures features, Commitment&& commitment, const RangeProof::CPtr& pProof)
+        : m_features(features), m_commitment(std::move(commitment)), m_pProof(pProof)
     {
         Serializer serializer;
         Serialize(serializer);
@@ -47,59 +47,59 @@ public:
     //
     Output& operator=(const Output& Output) = default;
     Output& operator=(Output&& Output) noexcept = default;
-    bool operator<(const Output& Output) const { return m_hash < Output.m_hash; }
-    bool operator==(const Output& Output) const { return m_hash == Output.m_hash; }
+    bool operator<(const Output& Output) const noexcept { return m_hash < Output.m_hash; }
+    bool operator==(const Output& Output) const noexcept { return m_hash == Output.m_hash; }
 
     //
     // Getters
     //
-    EOutputFeatures GetFeatures() const { return m_features; }
-    virtual const Commitment& GetCommitment() const override final { return m_commitment; }
-    const RangeProof& GetRangeProof() const { return m_proof; }
+    EOutputFeatures GetFeatures() const noexcept { return m_features; }
+    virtual const Commitment& GetCommitment() const noexcept override final { return m_commitment; }
+    const RangeProof::CPtr& GetRangeProof() const noexcept { return m_pProof; }
 
-    bool IsCoinbase() const { return (m_features & EOutputFeatures::COINBASE_OUTPUT) == EOutputFeatures::COINBASE_OUTPUT; }
+    bool IsCoinbase() const noexcept { return (m_features & EOutputFeatures::COINBASE_OUTPUT) == EOutputFeatures::COINBASE_OUTPUT; }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
-        serializer.Append<uint8_t>((uint8_t)m_features);
-        m_commitment.Serialize(serializer);
-        m_proof.Serialize(serializer);
-        return serializer;
+        return serializer
+            .Append<uint8_t>((uint8_t)m_features)
+            .Append(m_commitment)
+            .Append(m_pProof);
     }
 
     static Output Deserialize(const Context::CPtr&, Deserializer& deserializer)
     {
         const EOutputFeatures features = (EOutputFeatures)deserializer.Read<uint8_t>();
         Commitment commitment = Commitment::Deserialize(deserializer);
-        RangeProof proof = RangeProof::Deserialize(deserializer);
-        return Output(features, std::move(commitment), std::move(proof));
+        RangeProof::CPtr pProof = std::make_shared<const RangeProof>(RangeProof::Deserialize(deserializer));
+        return Output(features, std::move(commitment), pProof);
     }
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json({
             {"features", OutputFeatures::ToString(m_features)},
             {"commit", m_commitment},
-            {"proof", m_proof}
+            {"proof", m_pProof}
         });
     }
 
-    static Output FromJSON(const json& json)
+    static Output FromJSON(const Json& json)
     {
         return Output(
-            OutputFeatures::FromString(json["features"].get<std::string>()),
-            json["commit"].get<Commitment>(),
-            json["proof"].get<RangeProof>()
+            OutputFeatures::FromString(json.GetRequired<std::string>("features")),
+            json.GetRequired<Commitment>("commit"),
+            std::make_shared<const RangeProof>(json.GetRequired<RangeProof>("proof"))
         );
     }
 
     //
     // Traits
     //
-    virtual Hash GetHash() const override final { return m_hash; }
+    virtual Hash GetHash() const noexcept override final { return m_hash; }
 
 private:
     // Options for an output's structure or use
@@ -109,7 +109,7 @@ private:
     Commitment m_commitment;
 
     // A proof that the commitment is in the right range
-    RangeProof m_proof;
+    RangeProof::CPtr m_pProof;
 
     mutable Hash m_hash;
 };

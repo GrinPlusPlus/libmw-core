@@ -12,15 +12,13 @@ namespace RPC
     class Request : public Traits::IJsonable
     {
     public:
-        static Request FromJSON(const json& request)
+        static Request FromJSON(const Json& request)
         {
-            Json parser(request);
-
             // Parse id
             Id id = Id::FromJSON(request);
 
             // Parse jsonrpc
-            tl::optional<std::string> jsonrpcOpt = parser.Get<std::string>("jsonrpc");
+            tl::optional<std::string> jsonrpcOpt = request.Get<std::string>("jsonrpc");
             if (!jsonrpcOpt.has_value())
             {
                 ThrowNetwork("jsonrpc is missing");
@@ -31,19 +29,19 @@ namespace RPC
             }
 
             // Parse method
-            tl::optional<std::string> methodOpt = parser.Get<std::string>("method");
+            tl::optional<std::string> methodOpt = request.Get<std::string>("method");
             if (!methodOpt.has_value() || methodOpt.value().empty())
             {
                 ThrowNetwork("method is missing");
             }
 
             // Parse params
-            tl::optional<json> paramsOpt = parser.Get<json>("params");
+            tl::optional<json> paramsOpt = request.Get<json>("params");
 
             return Request(id, methodOpt.value(), std::move(paramsOpt));
         }
 
-        virtual json ToJSON() const override final
+        virtual json ToJSON() const noexcept override final
         {
             json json({
                 {"id", m_id.ToJSON()},

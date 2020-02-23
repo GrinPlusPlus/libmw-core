@@ -8,7 +8,7 @@
 #include <mw/core/models/crypto/Hash.h>
 #include <mw/core/models/crypto/BigInteger.h>
 #include <mw/core/models/crypto/BlindingFactor.h>
-#include <mw/core/models/tx/TransactionBody.h>
+#include <mw/core/models/tx/TxBody.h>
 #include <mw/core/traits/Printable.h>
 #include <mw/core/traits/Serializable.h>
 #include <mw/core/traits/Hashable.h>
@@ -55,33 +55,33 @@ public:
     //
     Transaction& operator=(const Transaction& transaction) = default;
     Transaction& operator=(Transaction&& transaction) noexcept = default;
-    bool operator<(const Transaction& transaction) const { return GetHash() < transaction.GetHash(); }
-    bool operator==(const Transaction& transaction) const { return GetHash() == transaction.GetHash(); }
-    bool operator!=(const Transaction& transaction) const { return GetHash() != transaction.GetHash(); }
+    bool operator<(const Transaction& transaction) const noexcept { return GetHash() < transaction.GetHash(); }
+    bool operator==(const Transaction& transaction) const noexcept { return GetHash() == transaction.GetHash(); }
+    bool operator!=(const Transaction& transaction) const noexcept { return GetHash() != transaction.GetHash(); }
 
     //
     // Getters
     //
-    const BlindingFactor& GetOffset() const { return m_offset; }
-    const TransactionBody& GetBody() const { return m_body; }
-    const std::vector<TransactionInput>& GetInputs() const { return m_body.GetInputs(); }
-    const std::vector<TransactionOutput>& GetOutputs() const { return m_body.GetOutputs(); }
-    const std::vector<TransactionKernel>& GetKernels() const { return m_body.GetKernels(); }
+    const BlindingFactor& GetOffset() const noexcept { return m_offset; }
+    const TransactionBody& GetBody() const noexcept { return m_body; }
+    const std::vector<TransactionInput>& GetInputs() const noexcept { return m_body.GetInputs(); }
+    const std::vector<TransactionOutput>& GetOutputs() const noexcept { return m_body.GetOutputs(); }
+    const std::vector<TransactionKernel>& GetKernels() const noexcept { return m_body.GetKernels(); }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
-        m_offset.Serialize(serializer);
-        m_body.Serialize(serializer);
-        return serializer;
+        return serializer
+            .Append(m_offset)
+            .Append(m_body);
     }
 
     static Transaction Deserialize(Deserializer& deserializer)
     {
         BlindingFactor offset = BlindingFactor::Deserialize(deserializer);
-        TransactionBody transactionBody = TransactionBody::Deserialize(deserializer);
+        TxBody transactionBody = TxBody::Deserialize(deserializer);
         return Transaction(std::move(offset), std::move(transactionBody));
     }
 
@@ -93,11 +93,11 @@ public:
         });
     }
 
-    static Transaction FromJSON(const json& json)
+    static Transaction FromJSON(const Json& json)
     {
         return Transaction(
-            BlindingFactor::FromHex(json["offset"].get<std::string>()),
-            json["body"].get<TransactionBody>()//TransactionBody::FromJSON(json["body"].get())
+            BlindingFactor::FromHex(json.GetRequired<std::string>("offset")),
+            json.GetRequired<TxBody>("body")
         );
     }
 
@@ -105,14 +105,14 @@ public:
     // Traits
     //
     virtual std::string Format() const override final { return GetHash().Format(); }
-    virtual Hash GetHash() const override final { return m_hash; }
+    virtual Hash GetHash() const noexcept override final { return m_hash; }
 
 private:
     // The kernel "offset" k2 excess is k1G after splitting the key k = k1 + k2.
     BlindingFactor m_offset;
 
     // The transaction body.
-    TransactionBody m_body;
+    TxBody m_body;
 
     mutable Hash m_hash;
 };

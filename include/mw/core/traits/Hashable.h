@@ -13,6 +13,6 @@ namespace Traits
     public:
         virtual ~IHashable() = default;
 
-        virtual Hash GetHash() const = 0;
+        virtual Hash GetHash() const noexcept = 0;
     };
 }

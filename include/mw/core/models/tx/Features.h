@@ -8,6 +8,18 @@
 #include <string>
 #include <mw/core/exceptions/DeserializationException.h>
 
+class Features
+{
+public:
+    Features(const uint8_t features) noexcept : m_features(features) { }
+
+    bool IsSet(const uint8_t feature) const noexcept { return (m_features & feature) == feature; }
+    uint8_t Get() const noexcept { return m_features; }
+
+private:
+    uint8_t m_features;
+};
+
 enum EOutputFeatures
 {
     // No Flags
@@ -19,7 +31,7 @@ enum EOutputFeatures
 
 namespace OutputFeatures
 {
-    static std::string ToString(const EOutputFeatures& features)
+    static std::string ToString(const EOutputFeatures& features) noexcept
     {
         switch (features)
         {
@@ -47,50 +59,50 @@ namespace OutputFeatures
     }
 }
 
-enum EKernelFeatures
-{
-    // No flags
-    DEFAULT_KERNEL = 0,
-
-    // Kernel matching a coinbase output
-    COINBASE_KERNEL = 1,
-
-    // Absolute height locked kernel; has fee and lock_height
-    HEIGHT_LOCKED = 2
-};
-
-namespace KernelFeatures
-{
-    static std::string ToString(const EKernelFeatures& features)
-    {
-        switch (features)
-        {
-            case DEFAULT_KERNEL:
-                return "Plain";
-            case COINBASE_KERNEL:
-                return "Coinbase";
-            case HEIGHT_LOCKED:
-                return "HeightLocked";
-        }
-
-        return "";
-    }
-
-    static EKernelFeatures FromString(const std::string& string)
-    {
-        if (string == "Plain")
-        {
-            return EKernelFeatures::DEFAULT_KERNEL;
-        }
-        else if (string == "Coinbase")
-        {
-            return EKernelFeatures::COINBASE_KERNEL;
-        }
-        else if (string == "HeightLocked")
-        {
-            return EKernelFeatures::HEIGHT_LOCKED;
-        }
-
-        ThrowDeserialization_F("Failed to deserialize kernel feature: {}", string);
-    }
-}
+//enum EKernelFeatures : uint8_t
+//{
+//    // No flags
+//    DEFAULT_KERNEL = 0,
+//
+//    // Kernel matching a coinbase output
+//    COINBASE_KERNEL = 1,
+//
+//    // Absolute height locked kernel; has fee and lock_height
+//    HEIGHT_LOCKED = 2
+//};
+//
+//namespace KernelFeatures
+//{
+//    static std::string ToString(const EKernelFeatures& features) noexcept
+//    {
+//        switch (features)
+//        {
+//            case DEFAULT_KERNEL:
+//                return "Plain";
+//            case COINBASE_KERNEL:
+//                return "Coinbase";
+//            case HEIGHT_LOCKED:
+//                return "HeightLocked";
+//        }
+//
+//        return "";
+//    }
+//
+//    static EKernelFeatures FromString(const std::string& string)
+//    {
+//        if (string == "Plain")
+//        {
+//            return EKernelFeatures::DEFAULT_KERNEL;
+//        }
+//        else if (string == "Coinbase")
+//        {
+//            return EKernelFeatures::COINBASE_KERNEL;
+//        }
+//        else if (string == "HeightLocked")
+//        {
+//            return EKernelFeatures::HEIGHT_LOCKED;
+//        }
+//
+//        ThrowDeserialization_F("Failed to deserialize kernel feature: {}", string);
+//    }
+//}

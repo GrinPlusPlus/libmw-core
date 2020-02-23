@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mw/core/models/block/Header.h>
-#include <mw/core/models/block/Block.h>
+#include <mw/core/models/block/IHeader.h>
+#include <mw/core/models/block/IBlock.h>
 #include <mw/core/traits/Batchable.h>
 #include <mw/core/common/Lock.h>
 #include <mw/core/file/FilePath.h>
@@ -27,13 +27,13 @@ public:
 	//
 	// Retrieve Blocks
 	//
-	virtual Block::CPtr GetBlockByHash(const Hash& hash) const noexcept = 0;
-	virtual Block::CPtr GetBlockByHeight(const uint64_t height) const noexcept = 0;
+	virtual IBlock::CPtr GetBlockByHash(const Hash& hash) const noexcept = 0;
+	virtual IBlock::CPtr GetBlockByHeight(const uint64_t height) const noexcept = 0;
 
 	//
 	// Save Blocks
 	//
-	virtual void AddBlock(const Block::CPtr& pBlock) = 0;
+	virtual void AddBlock(const IBlock::CPtr& pBlock) = 0;
 };
 
 class BlockDBFactory

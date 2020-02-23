@@ -8,7 +8,9 @@
 #include <mw/core/models/crypto/BlindingFactor.h>
 #include <mw/core/models/crypto/Hash.h>
 #include <mw/core/traits/Hashable.h>
+#include <mw/core/traits/Serializable.h>
 #include <mw/core/traits/Printable.h>
+#include <mw/core/traits/Jsonable.h>
 #include <mw/core/serialization/Serializer.h>
 #include <mw/core/crypto/Crypto.h>
 
@@ -18,7 +20,8 @@
 class IHeader :
     public Traits::IPrintable,
     public Traits::ISerializable,
-    public Traits::IHashable
+    public Traits::IHashable,
+    public Traits::IJsonable
 {
 public:
     using CPtr = std::shared_ptr<const IHeader>;
@@ -27,10 +30,8 @@ public:
     // Constructors
     //
     IHeader(
-        const uint16_t version,
         const uint64_t height,
         Hash&& previousHash,
-        Hash&& previousRoot,
         Hash&& outputRoot,
         Hash&& rangeProofRoot,
         Hash&& kernelRoot,
@@ -38,10 +39,8 @@ public:
         const uint64_t outputMMRSize,
         const uint64_t kernelMMRSize
     )
-        : m_version(version),
-        m_height(height),
+        : m_height(height),
         m_previousHash(std::move(previousHash)),
-        m_previousRoot(std::move(previousRoot)),
         m_outputRoot(std::move(outputRoot)),
         m_rangeProofRoot(std::move(rangeProofRoot)),
         m_kernelRoot(std::move(kernelRoot)),
@@ -49,8 +48,7 @@ public:
         m_outputMMRSize(outputMMRSize),
         m_kernelMMRSize(kernelMMRSize)
     {
-        Serializer serializer;
-        m_hash = Crypto::Blake2b(Serialize(serializer).vec());
+
     }
 
     //
@@ -61,21 +59,19 @@ public:
     //
     // Operators
     //
-    bool operator!=(const IHeader& rhs) const { return this->GetHash() != rhs.GetHash(); }
+    bool operator!=(const IHeader& rhs) const noexcept { return this->GetHash() != rhs.GetHash(); }
 
     //
     // Getters
     //
-    uint16_t GetVersion() const { return m_version; }
-    uint64_t GetHeight() const { return m_height; }
-    const Hash& GetPreviousHash() const { return m_previousHash; }
-    const Hash& GetPreviousRoot() const { return m_previousRoot; }
-    const Hash& GetOutputRoot() const { return m_outputRoot; }
-    const Hash& GetRangeProofRoot() const { return m_rangeProofRoot; }
-    const Hash& GetKernelRoot() const { return m_kernelRoot; }
-    const BlindingFactor& GetOffset() const { return m_offset; }
-    uint64_t GetOutputMMRSize() const { return m_outputMMRSize; }
-    uint64_t GetKernelMMRSize() const { return m_kernelMMRSize; }
+    uint64_t GetHeight() const noexcept { return m_height; }
+    const Hash& GetPreviousHash() const noexcept { return m_previousHash; }
+    const Hash& GetOutputRoot() const noexcept { return m_outputRoot; }
+    const Hash& GetRangeProofRoot() const noexcept { return m_rangeProofRoot; }
+    const Hash& GetKernelRoot() const noexcept { return m_kernelRoot; }
+    const BlindingFactor& GetOffset() const noexcept { return m_offset; }
+    uint64_t GetOutputMMRSize() const noexcept { return m_outputMMRSize; }
+    uint64_t GetKernelMMRSize() const noexcept { return m_kernelMMRSize; }
 
     //
     // Validation
@@ -85,7 +81,15 @@ public:
     //
     // Traits
     //
-    virtual Hash GetHash() const override final { return m_hash; }
+    virtual Hash GetHash() const noexcept override final
+    {
+        if (!m_hash.has_value())
+        {
+            m_hash = tl::make_optional(Crypto::Blake2b(Serialized()));
+        }
+
+        return m_hash.value();
+    }
     virtual std::string Format() const { return GetHash().ToHex(); }
 
     //
@@ -93,15 +97,18 @@ public:
     //
     static IHeader::CPtr Deserialize(const Context::CPtr& pContext, Deserializer& deserializer)
     {
-        return pContext->GetHeaderFactory().Deserialize(pContext, deserializer);
+        return pContext->GetHeaderFactory().Deserialize(deserializer);
+    }
+
+    static IHeader::CPtr FromJSON(const Context::CPtr& pContext, const Json& json)
+    {
+        return pContext->GetHeaderFactory().FromJSON(json);
     }
 
 protected:
-    mutable Hash m_hash;
-    uint16_t m_version;
+    mutable tl::optional<Hash> m_hash;
     uint64_t m_height;
     Hash m_previousHash;
-    Hash m_previousRoot;
     Hash m_outputRoot;
     Hash m_rangeProofRoot;
     Hash m_kernelRoot;

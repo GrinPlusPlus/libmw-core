@@ -21,19 +21,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # Dependencies
 include(deps/dependencies.cmake)
 
-if (WIN32)
-    add_definitions(-DMW_ENABLE_WSTRING -DUNICODE -DNOMINMAX)
-endif()
-
-if (MW_STATIC)
-    add_definitions(-DMW_STATIC)
-endif()
-
-add_subdirectory(src/common)
-add_subdirectory(src/db)
-add_subdirectory(src/net)
-add_subdirectory(src/crypto)
-add_subdirectory(src/traits)
+include(src/core.cmake)
 
 if (MSVC)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")

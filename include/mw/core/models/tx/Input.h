@@ -46,25 +46,25 @@ public:
     //
     Input& operator=(const Input& input) = default;
     Input& operator=(Input&& input) noexcept = default;
-    bool operator<(const Input& input) const { return m_hash < input.m_hash; }
-    bool operator==(const Input& input) const { return m_hash == input.m_hash; }
+    bool operator<(const Input& input) const noexcept { return m_hash < input.m_hash; }
+    bool operator==(const Input& input) const noexcept { return m_hash == input.m_hash; }
 
     //
     // Getters
     //
-    EOutputFeatures GetFeatures() const { return m_features; }
-    virtual const Commitment& GetCommitment() const override final { return m_commitment; }
+    EOutputFeatures GetFeatures() const noexcept { return m_features; }
+    virtual const Commitment& GetCommitment() const noexcept override final { return m_commitment; }
 
-    bool IsCoinbase() const { return (m_features & EOutputFeatures::COINBASE_OUTPUT) == EOutputFeatures::COINBASE_OUTPUT; }
+    bool IsCoinbase() const noexcept { return (m_features & EOutputFeatures::COINBASE_OUTPUT) == EOutputFeatures::COINBASE_OUTPUT; }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
-        serializer.Append<uint8_t>((uint8_t)m_features);
-        m_commitment.Serialize(serializer);
-        return serializer;
+        return serializer
+            .Append<uint8_t>((uint8_t)m_features)
+            .Append(m_commitment);
     }
 
     static Input Deserialize(const Context::CPtr&, Deserializer& deserializer)
@@ -74,7 +74,7 @@ public:
         return Input(features, std::move(commitment));
     }
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json({
             {"features", OutputFeatures::ToString(m_features)},
@@ -82,18 +82,18 @@ public:
         });
     }
 
-    static Input FromJSON(const json& json)
+    static Input FromJSON(const Json& json)
     {
         return Input(
-            OutputFeatures::FromString(json["features"].get<std::string>()),
-            json["commit"].get<Commitment>()
+            OutputFeatures::FromString(json.GetRequired<std::string>("features")),
+            json.GetRequired<Commitment>("commit")
         );
     }
 
     //
     // Traits
     //
-    virtual Hash GetHash() const override final { return m_hash; }
+    virtual Hash GetHash() const noexcept override final { return m_hash; }
 
 private:
     // The features of the output being spent. 

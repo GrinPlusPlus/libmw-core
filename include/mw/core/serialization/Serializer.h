@@ -21,7 +21,7 @@ public:
     Serializer(const size_t expectedSize) { m_serialized.reserve(expectedSize); }
     ~Serializer() { SecureMem::cleanse(m_serialized.data(), m_serialized.size()); }
 
-    template <class T>
+    template <class T, typename SFINAE = typename std::enable_if_t<std::is_integral_v<T>>>
     Serializer& Append(const T& t)
     {
         std::vector<uint8_t> temp(sizeof(T));
@@ -39,7 +39,7 @@ public:
         return *this;
     }
 
-    template <class T>
+    template <class T, typename SFINAE = typename std::enable_if_t<std::is_integral_v<T>>>
     Serializer& AppendLE(const T& t)
     {
         std::vector<uint8_t> temp(sizeof(T));

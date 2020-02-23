@@ -68,7 +68,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         if (IsV4())
         {

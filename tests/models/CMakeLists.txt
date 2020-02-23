@@ -10,5 +10,5 @@ file(GLOB SOURCE_CODE
 )
 
 add_executable(${TARGET_NAME} ${SOURCE_CODE})
-add_dependencies(${TARGET_NAME} Crypto)
-target_link_libraries(${TARGET_NAME} fmt Crypto)
+add_dependencies(${TARGET_NAME} Core::Crypto)
+target_link_libraries(${TARGET_NAME} fmt Core::Crypto)

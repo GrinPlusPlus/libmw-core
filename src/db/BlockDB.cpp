@@ -79,14 +79,14 @@ void BlockDB::AddHeaders(const std::vector<IHeader::CPtr>& headers)
     m_pDatabase->Put(HEADER_TABLE, entries);
 }
 
-Block::CPtr BlockDB::GetBlockByHash(const Hash& hash) const noexcept
+IBlock::CPtr BlockDB::GetBlockByHash(const Hash& hash) const noexcept
 {
     LOG_TRACE_F("Loading block {}", hash);
 
-    auto pEntry = m_pDatabase->Get<Block>(BLOCK_TABLE, hash.ToHex());
+    auto pEntry = m_pDatabase->Get<IBlock>(BLOCK_TABLE, hash.ToHex());
     if (pEntry != nullptr)
     {
-        LOG_DEBUG_F("Block found for hash {}", hash);
+        LOG_DEBUG_F("IBlock found for hash {}", hash);
         return pEntry->item;
     }
     else
@@ -96,7 +96,7 @@ Block::CPtr BlockDB::GetBlockByHash(const Hash& hash) const noexcept
     }
 }
 
-Block::CPtr BlockDB::GetBlockByHeight(const uint64_t height) const noexcept
+IBlock::CPtr BlockDB::GetBlockByHeight(const uint64_t height) const noexcept
 {
     LOG_TRACE_F("Loading block {}", height);
 
@@ -113,10 +113,10 @@ Block::CPtr BlockDB::GetBlockByHeight(const uint64_t height) const noexcept
     }
 }
 
-void BlockDB::AddBlock(const Block::CPtr& pBlock)
+void BlockDB::AddBlock(const IBlock::CPtr& pBlock)
 {
     LOG_TRACE_F("Saving block {}", pBlock);
 
-    std::vector<DBEntry<Block>> entries({ BlockDB::ToBlockEntry(pBlock) });
-    m_pDatabase->Put<Block>(BLOCK_TABLE, entries);
+    std::vector<DBEntry<IBlock>> entries({ BlockDB::ToBlockEntry(pBlock) });
+    m_pDatabase->Put<IBlock>(BLOCK_TABLE, entries);
 }

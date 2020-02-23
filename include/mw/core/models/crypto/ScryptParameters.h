@@ -13,7 +13,7 @@ public:
     ScryptParameters(const uint32_t N_, const uint32_t r_, const uint32_t p_) : N(N_), r(r_), p(p_) { }
     virtual ~ScryptParameters() = default;
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json({
             {"N", N},
@@ -22,12 +22,12 @@ public:
         });
     }
 
-    static ScryptParameters FromJSON(const json& json)
+    static ScryptParameters FromJSON(const Json& json)
     {
         return ScryptParameters(
-            json["N"].get<uint32_t>(),
-            json["r"].get<uint32_t>(),
-            json["p"].get<uint32_t>()
+            json.GetRequired<uint32_t>("N"),
+            json.GetRequired<uint32_t>("r"),
+            json.GetRequired<uint32_t>("p")
         );
     }
 };

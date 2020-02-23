@@ -55,7 +55,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         return m_bytes.Serialize(serializer);
     }
@@ -65,14 +65,14 @@ public:
         return Commitment(BigInt<SIZE>::Deserialize(deserializer));
     }
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json(m_bytes.ToHex());
     }
 
-    static Commitment FromJSON(const json& json)
+    static Commitment FromJSON(const Json& json)
     {
-        return Commitment::FromHex(json.get<std::string>());
+        return Commitment::FromHex(json.Get<std::string>());
     }
 
     std::string ToHex() const { return m_bytes.ToHex(); }

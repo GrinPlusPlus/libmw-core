@@ -19,6 +19,7 @@ class RangeProof :
     public Traits::IJsonable
 {
 public:
+    using CPtr = std::shared_ptr<const RangeProof>;
     static constexpr size_t const& MAX_SIZE = 675;
 
     //
@@ -50,7 +51,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         return serializer
             .Append<uint64_t>(m_bytes.size())
@@ -68,14 +69,14 @@ public:
         return RangeProof(deserializer.ReadVector(proofSize));
     }
 
-    virtual json ToJSON() const override final
+    virtual json ToJSON() const noexcept override final
     {
         return json(ToHex());
     }
 
-    static RangeProof FromJSON(const json& json)
+    static RangeProof FromJSON(const Json& json)
     {
-        return RangeProof::FromHex(json.get<std::string>());
+        return RangeProof::FromHex(json.Get<std::string>());
     }
 
     std::string ToHex() const { return HexUtil::ToHex(m_bytes); }

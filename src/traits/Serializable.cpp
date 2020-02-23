@@ -3,7 +3,7 @@
 
 namespace Traits
 {
-    std::vector<uint8_t> ISerializable::Serialize() const
+    std::vector<uint8_t> ISerializable::Serialized() const noexcept
     {
         Serializer serializer;
         Serialize(serializer);

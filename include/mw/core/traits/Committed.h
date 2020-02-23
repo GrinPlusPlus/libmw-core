@@ -13,6 +13,6 @@ namespace Traits
     public:
         virtual ~ICommitted() = default;
 
-        virtual const Commitment& GetCommitment() const = 0;
+        virtual const Commitment& GetCommitment() const noexcept = 0;
     };
 }

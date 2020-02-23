@@ -37,7 +37,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         return m_value.Serialize(serializer);
     }

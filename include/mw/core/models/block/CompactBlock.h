@@ -7,7 +7,7 @@
 #include <mw/core/models/block/Header.h>
 #include <mw/core/models/block/ShortId.h>
 #include <mw/core/models/tx/Output.h>
-#include <mw/core/models/tx/Kernel.h>
+#include <mw/core/models/tx/IKernel.h>
 #include <mw/core/traits/Printable.h>
 #include <mw/core/traits/Serializable.h>
 #include <mw/core/traits/Hashable.h>
@@ -54,20 +54,20 @@ public:
     //
     // Getters
     //
-    const IHeader::CPtr& GetHeader() const { return m_pHeader; }
-    uint64_t GetNonce() const { return m_nonce; }
+    const IHeader::CPtr& GetHeader() const noexcept { return m_pHeader; }
+    uint64_t GetNonce() const noexcept { return m_nonce; }
 
-    const std::vector<Output>& GetOutputs() const { return m_outputs; }
-    const std::vector<Kernel>& GetKernels() const { return m_kernels; }
-    const std::vector<ShortId>& GetShortIds() const { return m_shortIds; }
+    const std::vector<Output>& GetOutputs() const noexcept { return m_outputs; }
+    const std::vector<Kernel>& GetKernels() const noexcept { return m_kernels; }
+    const std::vector<ShortId>& GetShortIds() const noexcept { return m_shortIds; }
 
-    const Hash& GetPreviousHash() const { return m_pHeader->GetPreviousHash(); }
-    uint64_t GetHeight() const { return m_pHeader->GetHeight(); }
+    const Hash& GetPreviousHash() const noexcept { return m_pHeader->GetPreviousHash(); }
+    uint64_t GetHeight() const noexcept { return m_pHeader->GetHeight(); }
 
     //
     // Serialization/Deserialization
     //
-    Serializer& Serialize(Serializer& serializer) const
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         m_pHeader->Serialize(serializer);
         serializer
@@ -122,7 +122,7 @@ public:
     // Traits
     //
     virtual std::string Format() const override final { return m_pHeader->Format(); }
-    virtual Hash GetHash() const override final { return m_pHeader->GetHash(); }
+    virtual Hash GetHash() const noexcept override final { return m_pHeader->GetHash(); }
 
 private:
     IHeader::CPtr m_pHeader;

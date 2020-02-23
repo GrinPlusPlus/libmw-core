@@ -16,7 +16,7 @@ public:
     uint8_t* data() { return m_compressed.data(); }
     size_t size() const { return m_compressed.size(); }
 
-    virtual Serializer& Serialize(Serializer& serializer) const override final
+    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
     {
         return m_compressed.Serialize(serializer);
     }

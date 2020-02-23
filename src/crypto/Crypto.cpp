@@ -28,7 +28,12 @@ Locked<Context> SECP256K1_CONTEXT(std::make_shared<Context>());
 BigInt<32> Crypto::Blake2b(const std::vector<uint8_t>& input)
 {
     BigInt<32> result;
-    blake2b(result.data(), 32, input.data(), input.size(), nullptr, 0);
+    const int status = blake2b(result.data(), 32, input.data(), input.size(), nullptr, 0);
+    if (status != 0)
+    {
+        ThrowCrypto_F("blake2b failed with status: {}", status);
+    }
+
     return result;
 }
 
@@ -37,7 +42,12 @@ BigInt<32> Crypto::Blake2b(
     const std::vector<uint8_t>& input)
 {
     BigInt<32> result;
-    blake2b(result.data(), 32, input.data(), input.size(), key.data(), key.size());
+    const int status = blake2b(result.data(), 32, input.data(), input.size(), key.data(), key.size());
+    if (status != 0)
+    {
+        ThrowCrypto_F("blake2b failed with status: {}", status);
+    }
+
     return result;
 }
 

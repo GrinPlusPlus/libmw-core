@@ -5,5 +5,5 @@ file(GLOB SOURCE_CODE
 )
 
 add_executable(${TARGET_NAME} ${SOURCE_CODE})
-add_dependencies(${TARGET_NAME} Common)
-target_link_libraries(${TARGET_NAME} fmt Common)
+add_dependencies(${TARGET_NAME} Core::Common)
+target_link_libraries(${TARGET_NAME} fmt Core::Common)

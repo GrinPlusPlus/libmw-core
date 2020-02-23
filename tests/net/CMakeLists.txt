@@ -7,5 +7,5 @@ file(GLOB SOURCE_CODE
 )
 
 add_executable(${TARGET_NAME} ${SOURCE_CODE})
-add_dependencies(${TARGET_NAME} Net)
-target_link_libraries(${TARGET_NAME} fmt Net)
+add_dependencies(${TARGET_NAME} Core::Net)
+target_link_libraries(${TARGET_NAME} fmt Core::Net)

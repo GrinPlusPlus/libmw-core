@@ -27,15 +27,13 @@ namespace RPC
             return Response(id, tl::nullopt, tl::make_optional(Error(code, message, data)));
         }
 
-        static Response FromJSON(const json& response)
+        static Response FromJSON(const Json& response)
         {
-            Json parser(response);
-
             // Parse id
             Id id = Id::FromJSON(response);
 
             // Parse jsonrpc
-            tl::optional<std::string> jsonrpcOpt = parser.Get<std::string>("jsonrpc");
+            tl::optional<std::string> jsonrpcOpt = response.Get<std::string>("jsonrpc");
             if (!jsonrpcOpt.has_value())
             {
                 ThrowNetwork("jsonrpc is missing");
@@ -46,18 +44,18 @@ namespace RPC
             }
 
             // Parse result/error
-            tl::optional<json> errorOpt = parser.Get<json>("error");
+            tl::optional<json> errorOpt = response.Get<json>("error");
             if (errorOpt.has_value())
             {
                 return Response(id, tl::nullopt, tl::make_optional(Error::FromJSON(errorOpt.value())));
             }
             else
             {
-                return Response(id, parser.Get<json>("result"), tl::nullopt);
+                return Response(id, response.Get<json>("result"), tl::nullopt);
             }
         }
 
-        virtual json ToJSON() const override final
+        virtual json ToJSON() const noexcept override final
         {
             json json;
             json["jsonrpc"] = "2.0";

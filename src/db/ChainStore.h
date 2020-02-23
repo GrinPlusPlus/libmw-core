@@ -1,7 +1,8 @@
 #pragma once
 
-#include <mw/core/models/block/Header.h>
+#include <mw/core/models/block/IHeader.h>
 #include <mw/core/file/FilePath.h>
+#include <tl/optional.hpp>
 
 class ChainStore
 {

@@ -10,5 +10,5 @@ add_subdirectory(serialization)
 add_subdirectory(util)
 
 add_executable(Tests TestMain.cpp)
-add_dependencies(Tests fmt Common)
-target_link_libraries(Tests reproc++ fmt Common)
+add_dependencies(Tests fmt Core::Common)
+target_link_libraries(Tests reproc++ fmt Core::Common)
