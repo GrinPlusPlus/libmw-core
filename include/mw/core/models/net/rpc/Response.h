@@ -55,7 +55,7 @@ namespace RPC
             }
         }
 
-        virtual json ToJSON() const noexcept override final
+        json ToJSON() const noexcept final
         {
             json json;
             json["jsonrpc"] = "2.0";

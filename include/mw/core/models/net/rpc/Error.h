@@ -41,7 +41,7 @@ namespace RPC
             return Error(codeOpt.value(), messageOpt.value(), dataOpt);
         }
 
-        virtual json ToJSON() const noexcept override final
+        json ToJSON() const noexcept final
         {
             json json({
                 {"code", m_code},

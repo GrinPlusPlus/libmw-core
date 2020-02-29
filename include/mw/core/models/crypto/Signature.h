@@ -52,7 +52,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return m_bytes.Serialize(serializer);
     }
@@ -62,7 +62,7 @@ public:
         return Signature(BigInt<SIZE>::Deserialize(deserializer));
     }
 
-    virtual json ToJSON() const noexcept override final
+    json ToJSON() const noexcept final
     {
         return json(m_bytes.ToHex());
     }
@@ -78,7 +78,7 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_bytes.Format(); }
+    std::string Format() const final { return m_bytes.Format(); }
 
 private:
     // The 64 byte Signature.

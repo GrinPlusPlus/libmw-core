@@ -5,29 +5,26 @@
 #pragma warning(disable:4267)
 #pragma warning(disable:4334)
 #pragma warning(disable:4018)
-#include <mio/mmap.hpp>
+#include <mio/mio.hpp>
 #pragma warning(pop)
 
-#include <mw/core/file/FilePath.h>
-#include <mw/core/file/FileHelper.h>
+#include <mw/core/file/File.h>
+#include <cassert>
 
 class MemMap
 {
 public:
-    MemMap(const FilePath& path) : m_path(path), m_mapped(false) { }
-    MemMap(FilePath&& path) : m_path(std::move(path)), m_mapped(false) { }
+    MemMap(const File& file) : m_file(file), m_mapped(false) { }
+    MemMap(File&& file) : m_file(std::move(file)), m_mapped(false) { }
 
     void Map()
     {
-        if (m_mapped)
-        {
-            ThrowFile_F("{} already memory mapped", m_path);
-        }
+        assert(!m_mapped);
 
-        if (FileHelper(m_path).GetFileSize() > 0)
+        if (m_file.GetSize() > 0)
         {
             std::error_code error;
-            m_mmap = mio::make_mmap_source(m_path.ToPath(), error);
+            m_mmap = mio::make_mmap_source(m_file.GetPath().ToString(), error);
             if (error.value() > 0)
             {
                 ThrowFile_F("Failed to mmap file: ({}) {}", error.value(), error.message());
@@ -48,12 +45,29 @@ public:
 
     std::vector<uint8_t> Read(const size_t position, const size_t numBytes) const
     {
-        // TODO: Confirm m_mmap is mapped
+        assert(m_mapped);
         return std::vector<uint8_t>(m_mmap.cbegin() + position, m_mmap.cbegin() + position + numBytes);
     }
 
+    uint8_t ReadByte(const size_t position) const
+    {
+        assert(m_mapped);
+        return *((uint8_t*)(m_mmap.cbegin() + position));
+    }
+
+    bool empty() const noexcept
+    {
+        assert(m_mapped);
+        return m_mmap.empty();
+    }
+
+    size_t size() const noexcept
+    {
+        return m_mmap.size();
+    }
+
 private:
-    FilePath m_path;
+    File m_file;
     mio::mmap_source m_mmap;
     bool m_mapped;
 };

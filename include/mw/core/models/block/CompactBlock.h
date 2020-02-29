@@ -67,7 +67,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         m_pHeader->Serialize(serializer);
         serializer
@@ -121,8 +121,8 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_pHeader->Format(); }
-    virtual Hash GetHash() const noexcept override final { return m_pHeader->GetHash(); }
+    std::string Format() const final { return m_pHeader->Format(); }
+    Hash GetHash() const noexcept final { return m_pHeader->GetHash(); }
 
 private:
     IHeader::CPtr m_pHeader;

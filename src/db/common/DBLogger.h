@@ -12,7 +12,7 @@ public:
     DBLogger() = default;
     ~DBLogger() override = default;
 
-    virtual void Logv(const char* format, va_list arguments) override final
+    void Logv(const char* format, va_list arguments) final
     {
         // We first attempt to print into a stack-allocated buffer. If this attempt
         // fails, we make a second attempt with a dynamically allocated buffer.

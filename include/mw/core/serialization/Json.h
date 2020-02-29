@@ -144,7 +144,7 @@ public:
         return m_json.find(key) != m_json.cend();
     }
 
-    virtual std::string Format() const override final { return m_json.dump(); }
+    std::string Format() const final { return m_json.dump(); }
 
 private:
     json m_json;

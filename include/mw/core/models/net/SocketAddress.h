@@ -36,7 +36,7 @@ public:
     const uint16_t GetPortNumber() const noexcept { return m_port; }
     asio::ip::tcp::endpoint GetEndpoint() const noexcept { return asio::ip::tcp::endpoint(m_ipAddress.GetAddress(), m_port); }
 
-    virtual std::string Format() const override final
+    std::string Format() const final
     {
         return m_ipAddress.Format() + ":" + std::to_string(m_port);
     }
@@ -44,7 +44,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return m_ipAddress.Serialize(serializer)
             .Append<uint16_t>(m_port);

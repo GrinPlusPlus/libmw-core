@@ -1,4 +1,4 @@
-set(TARGET_NAME Core::Database_Tests)
+set(TARGET_NAME Database_Tests)
 
 file(GLOB SOURCE_CODE
     "*.cpp"

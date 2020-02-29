@@ -136,7 +136,7 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_path.ToPath().u8string(); }
+    std::string Format() const final { return m_path.ToPath().u8string(); }
 
 private:
     FilePath m_path;

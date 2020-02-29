@@ -8,22 +8,22 @@ const uint64_t MAX_WIDTH = 1 << 20;
 const size_t SCRATCH_SPACE_SIZE = 256 * MAX_WIDTH;
 const size_t MAX_GENERATORS = 256;
 
-bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs) const
+bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, RangeProof::CPtr>>& rangeProofs) const
 {
     const size_t numBits = 64;
-    const size_t proofLength = rangeProofs.front().second.size();
+    const size_t proofLength = rangeProofs.front().second->size();
 
     std::vector<Commitment> commitments;
     commitments.reserve(rangeProofs.size());
 
     std::vector<const unsigned char*> bulletproofPointers;
     bulletproofPointers.reserve(rangeProofs.size());
-    for (const std::pair<Commitment, RangeProof>& rangeProof : rangeProofs)
+    for (const std::pair<Commitment, RangeProof::CPtr>& rangeProof : rangeProofs)
     {
         if (!m_cache.WasAlreadyVerified(rangeProof.first))
         {
             commitments.push_back(rangeProof.first);
-            bulletproofPointers.emplace_back(rangeProof.second.data());
+            bulletproofPointers.emplace_back(rangeProof.second->data());
         }
     }
 

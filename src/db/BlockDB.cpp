@@ -71,8 +71,7 @@ void BlockDB::AddHeaders(const std::vector<IHeader::CPtr>& headers)
     entries.reserve(headers.size());
 
     std::transform(
-        headers.cbegin(),
-        headers.cend(),
+        headers.cbegin(), headers.cend(),
         std::back_inserter(entries),
         BlockDB::ToHeaderEntry
     );

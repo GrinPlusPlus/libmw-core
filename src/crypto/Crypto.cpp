@@ -225,7 +225,7 @@ std::unique_ptr<RewoundProof> Crypto::RewindRangeProof(
 }
 
 bool Crypto::VerifyRangeProofs(
-    const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs)
+    const std::vector<std::pair<Commitment, RangeProof::CPtr>>& rangeProofs)
 {
     return Bulletproofs(SECP256K1_CONTEXT).VerifyBulletproofs(rangeProofs);
 }

@@ -47,7 +47,7 @@ namespace RPC
             ThrowNetwork("Failed to parse Id");
         }
 
-        virtual json ToJSON() const noexcept override final
+        json ToJSON() const noexcept final
         {
             if (m_type == value_t::null)
             {

@@ -23,6 +23,7 @@ namespace fs = ghc::filesystem;
 
 class FilePath : public Traits::IPrintable
 {
+    friend class File;
 public:
     //
     // Constructors
@@ -139,7 +140,7 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_path.u8string(); }
+    std::string Format() const final { return m_path.u8string(); }
 
 private:
     fs::path m_path;

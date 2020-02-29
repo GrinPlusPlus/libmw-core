@@ -81,7 +81,7 @@ public:
     //
     // Traits
     //
-    virtual Hash GetHash() const noexcept override final
+    Hash GetHash() const noexcept final
     {
         if (!m_hash.has_value())
         {

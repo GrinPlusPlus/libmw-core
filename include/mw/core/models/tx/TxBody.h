@@ -60,7 +60,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         serializer
             .Append<uint64_t>(m_inputs.size())
@@ -119,7 +119,7 @@ public:
         return TxBody(std::move(inputs), std::move(outputs), std::move(kernels));
     }
 
-    virtual json ToJSON() const noexcept override final
+    json ToJSON() const noexcept final
     {
         return json({
             {"inputs", m_inputs},
@@ -144,7 +144,7 @@ public:
         //
         // Verify RangeProofs
         //
-        std::vector<std::pair<Commitment, RangeProof>> rangeProofs;
+        std::vector<std::pair<Commitment, RangeProof::CPtr>> rangeProofs;
         std::transform(
             m_outputs.cbegin(), m_outputs.cend(),
             std::back_inserter(rangeProofs),

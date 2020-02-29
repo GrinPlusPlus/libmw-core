@@ -96,23 +96,23 @@ public:
     //
     // Batchable
     //
-    virtual void OnInitWrite() noexcept override final
+    void OnInitWrite() noexcept final
     {
         assert(m_pTx == nullptr);
         m_pTx = std::make_shared<DBTransaction>(m_pDB);
     }
 
-    virtual void OnEndWrite() noexcept override final
+    void OnEndWrite() noexcept final
     {
         m_pTx.reset();
     }
 
-    virtual void Commit() override final
+    void Commit() final
     {
         assert(m_pTx != nullptr);
         m_pTx->Commit();
     }
-    virtual void Rollback() noexcept override final { m_pTx.reset(); }
+    void Rollback() noexcept final { m_pTx.reset(); }
     
 private:
     Database(const Context::CPtr& pContext, leveldb::Options&& options, leveldb::DB* pDB) noexcept

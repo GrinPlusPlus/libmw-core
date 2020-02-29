@@ -127,7 +127,7 @@ public:
     //
     //
     static bool VerifyRangeProofs(
-        const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs
+        const std::vector<std::pair<Commitment, RangeProof::CPtr>>& rangeProofs
     );
 
     //

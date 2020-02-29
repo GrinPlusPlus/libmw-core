@@ -87,7 +87,7 @@ public:
     //
     // Traits
     //
-    virtual Hash GetHash() const noexcept override final
+    Hash GetHash() const noexcept final
     {
         if (!m_hash.has_value())
         {
@@ -96,7 +96,7 @@ public:
 
         return m_hash.value(); 
     }
-    virtual const Commitment& GetCommitment() const noexcept override final { return m_excess; }
+    const Commitment& GetCommitment() const noexcept final { return m_excess; }
 
 protected:
     // Options for a kernel's structure or use

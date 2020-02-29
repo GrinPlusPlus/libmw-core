@@ -68,14 +68,14 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final { return m_id.Serialize(serializer); }
+    Serializer& Serialize(Serializer& serializer) const noexcept final { return m_id.Serialize(serializer); }
     static ShortId Deserialize(const Context::CPtr&, Deserializer& deserializer) { return BigInt<6>::Deserialize(deserializer); }
 
     //
     // Traits
     //
-    virtual std::string Format() const override final { return m_id.Format(); }
-    virtual Hash GetHash() const noexcept override final { return Crypto::Blake2b(m_id.vec()); }
+    std::string Format() const final { return m_id.Format(); }
+    Hash GetHash() const noexcept final { return Crypto::Blake2b(m_id.vec()); }
 
 private:
     BigInt<6> m_id;

@@ -71,7 +71,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return serializer
             .Append(m_offset)
@@ -85,7 +85,7 @@ public:
         return Transaction(std::move(offset), std::move(transactionBody));
     }
 
-    virtual json ToJSON() const override final
+    json ToJSON() const final
     {
         return json({
             {"offset", m_offset.ToHex()},
@@ -104,8 +104,8 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return GetHash().Format(); }
-    virtual Hash GetHash() const noexcept override final { return m_hash; }
+    std::string Format() const final { return GetHash().Format(); }
+    Hash GetHash() const noexcept final { return m_hash; }
 
 private:
     // The kernel "offset" k2 excess is k1G after splitting the key k = k1 + k2.

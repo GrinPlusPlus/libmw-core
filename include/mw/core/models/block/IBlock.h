@@ -58,7 +58,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return serializer.Append(m_pHeader).Append(m_body);
     }
@@ -68,7 +68,7 @@ public:
         return pContext->GetBlockFactory().Deserialize(deserializer);
     }
 
-    virtual json ToJSON() const noexcept override final
+    json ToJSON() const noexcept final
     {
         return json({
             { "header", m_pHeader },
@@ -91,7 +91,7 @@ public:
     // Traits
     //
     virtual Hash GetHash() const noexcept { return m_pHeader->GetHash(); }
-    virtual std::string Format() const override final { return GetHash().ToHex(); }
+    std::string Format() const final { return GetHash().ToHex(); }
 
 protected:
     IHeader::CPtr m_pHeader;

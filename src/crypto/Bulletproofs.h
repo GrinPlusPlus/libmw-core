@@ -16,7 +16,7 @@ public:
     ~Bulletproofs() = default;
 
     bool VerifyBulletproofs(
-        const std::vector<std::pair<Commitment, RangeProof>>& rangeProofs
+        const std::vector<std::pair<Commitment, RangeProof::CPtr>>& rangeProofs
     ) const;
 
     RangeProof GenerateRangeProof(

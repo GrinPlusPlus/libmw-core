@@ -53,14 +53,14 @@ public:
     // Getters
     //
     EOutputFeatures GetFeatures() const noexcept { return m_features; }
-    virtual const Commitment& GetCommitment() const noexcept override final { return m_commitment; }
+    const Commitment& GetCommitment() const noexcept final { return m_commitment; }
 
     bool IsCoinbase() const noexcept { return (m_features & EOutputFeatures::COINBASE_OUTPUT) == EOutputFeatures::COINBASE_OUTPUT; }
 
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return serializer
             .Append<uint8_t>((uint8_t)m_features)
@@ -74,7 +74,7 @@ public:
         return Input(features, std::move(commitment));
     }
 
-    virtual json ToJSON() const noexcept override final
+    json ToJSON() const noexcept final
     {
         return json({
             {"features", OutputFeatures::ToString(m_features)},
@@ -93,7 +93,7 @@ public:
     //
     // Traits
     //
-    virtual Hash GetHash() const noexcept override final { return m_hash; }
+    Hash GetHash() const noexcept final { return m_hash; }
 
 private:
     // The features of the output being spent. 

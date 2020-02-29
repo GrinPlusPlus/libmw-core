@@ -1,4 +1,5 @@
 #include <mw/core/file/File.h>
+#include <mw/core/common/Logger.h>
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -6,6 +7,26 @@
 #else
 #include <unistd.h>
 #endif
+
+void File::Create()
+{
+    std::ifstream inFile(m_path.c_str(), std::ios::in | std::ifstream::ate | std::ifstream::binary);
+    if (inFile.is_open())
+    {
+        inFile.close();
+    }
+    else
+    {
+        LOG_INFO_F("File {} does not exist. Creating it now.", m_path);
+        std::ofstream outFile(m_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+        if (!outFile.is_open())
+        {
+            ThrowFile_F("Failed to create file: {}", m_path);
+        }
+
+        outFile.close();
+    }
+}
 
 void File::Truncate(const uint64_t size)
 {
@@ -45,7 +66,7 @@ void File::Rename(const std::string& filename)
         ThrowFile("Rename not implemented for directories");
     }
 
-    const FilePath parent(m_path.parent_path());
+    const FilePath parent(m_path.GetParent());
     if (parent == m_path)
     {
         ThrowFile_F("Can't find parent path for {}", *this);
@@ -58,7 +79,7 @@ void File::Rename(const std::string& filename)
     }
 
     std::error_code ec;
-    fs::rename(m_path, destination.m_path, ec);
+    fs::rename(m_path.m_path, destination.m_path, ec);
     if (ec)
     {
         ThrowFile_F("Failed to rename {} to {}", *this, destination);
@@ -70,18 +91,18 @@ void File::Rename(const std::string& filename)
 std::vector<uint8_t> File::ReadBytes() const
 {
     std::error_code ec;
-    if (!fs::exists(m_path, ec) || ec)
+    if (!fs::exists(m_path.m_path, ec) || ec)
     {
         ThrowFile_F("{} not found", *this);
     }
 
-    std::ifstream file(m_path, std::ios::in | std::ios::binary);
+    std::ifstream file(m_path.m_path, std::ios::in | std::ios::binary);
     if (!file.is_open())
     {
         ThrowFile_F("Failed to open {} for reading", *this);
     }
 
-    const size_t size = (size_t)fs::file_size(m_path, ec);
+    const size_t size = (size_t)fs::file_size(m_path.m_path, ec);
 
     std::vector<uint8_t> bytes((size_t)size);
     file.seekg(0, std::ios::beg);
@@ -91,10 +112,35 @@ std::vector<uint8_t> File::ReadBytes() const
     return bytes;
 }
 
+void File::Write(const std::vector<uint8_t>& bytes)
+{
+    std::ofstream file(m_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+    if (!file.is_open())
+    {
+        ThrowFile_F("Failed to write to file: {}", m_path);
+    }
+
+    file.write((const char*)bytes.data(), bytes.size());
+    file.close();
+}
+
+void File::WriteBytes(const std::map<uint64_t, uint8_t>& bytes)
+{
+    std::ofstream file(m_path.c_str(), std::ios_base::binary | std::ios_base::out | std::ios_base::in);
+
+    for (auto iter : bytes)
+    {
+        file.seekp(iter.first);
+        file.write((const char*)&iter.second, 1);
+    }
+
+    file.close();
+}
+
 size_t File::GetSize() const
 {
     std::error_code ec;
-    const size_t size = (size_t)fs::file_size(m_path, ec);
+    const size_t size = (size_t)fs::file_size(m_path.m_path, ec);
     if (ec)
     {
         ThrowFile_F("Failed to determine size of {}", *this);

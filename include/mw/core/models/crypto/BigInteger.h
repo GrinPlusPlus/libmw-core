@@ -78,7 +78,7 @@ public:
     }
 
     std::string ToHex() const { return HexUtil::ToHex(m_bytes); }
-    virtual std::string Format() const override final { return ToHex(); }
+    std::string Format() const final { return ToHex(); }
 
     //
     // Operators
@@ -154,7 +154,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return serializer.Append(m_bytes);
     }

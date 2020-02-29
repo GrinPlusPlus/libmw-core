@@ -21,7 +21,7 @@ public:
         return std::make_shared<AppendOnlyFile>(path, fileSize);
     }
 
-    virtual void Commit() override final
+    void Commit() final
     {
         if (m_fileSize == m_bufferIndex && m_buffer.empty())
         {
@@ -68,7 +68,7 @@ public:
         return true;
     }
 
-    virtual void Rollback() override final
+    void Rollback() final
     {
         m_bufferIndex = m_fileSize;
         m_buffer.clear();

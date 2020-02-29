@@ -8,48 +8,48 @@
 class BlockDB : public IBlockDB
 {
 public:
-	BlockDB(const Database::Ptr& pDatabase, const ChainStore::Ptr& pChainStore)
-		: m_pDatabase(pDatabase), m_pChainStore(pChainStore) { }
+    BlockDB(const Database::Ptr& pDatabase, const ChainStore::Ptr& pChainStore)
+        : m_pDatabase(pDatabase), m_pChainStore(pChainStore) { }
 
-	//
-	// Retrieve Headers
-	//
-	virtual IHeader::CPtr GetHeaderByHash(const Hash& hash) const noexcept override final;
-	virtual std::vector<IHeader::CPtr> GetHeadersByHash(const std::vector<Hash>& hashes) const noexcept override final;
+    //
+    // Retrieve Headers
+    //
+    IHeader::CPtr GetHeaderByHash(const Hash& hash) const noexcept final;
+    std::vector<IHeader::CPtr> GetHeadersByHash(const std::vector<Hash>& hashes) const noexcept final;
 
-	//
-	// Save Headers
-	//
-	virtual void AddHeader(const IHeader::CPtr& pHeader) override final;
-	virtual void AddHeaders(const std::vector<IHeader::CPtr>& headers) override final;
+    //
+    // Save Headers
+    //
+    void AddHeader(const IHeader::CPtr& pHeader) final;
+    void AddHeaders(const std::vector<IHeader::CPtr>& headers) final;
 
-	//
-	// Retrieve Blocks
-	//
-	virtual IBlock::CPtr GetBlockByHash(const Hash& hash) const noexcept override final;
-	virtual IBlock::CPtr GetBlockByHeight(const uint64_t height) const noexcept override final;
+    //
+    // Retrieve Blocks
+    //
+    IBlock::CPtr GetBlockByHash(const Hash& hash) const noexcept final;
+    IBlock::CPtr GetBlockByHeight(const uint64_t height) const noexcept final;
 
-	//
-	// Save Blocks
-	//
-	virtual void AddBlock(const IBlock::CPtr& pBlock) override final;
+    //
+    // Save Blocks
+    //
+    void AddBlock(const IBlock::CPtr& pBlock) final;
 
-	virtual void Commit() override final { return m_pDatabase->Commit(); }
-	virtual void Rollback() noexcept override final { return m_pDatabase->Rollback(); }
-	virtual void OnInitWrite() noexcept override final { m_pDatabase->OnInitWrite(); }
-	virtual void OnEndWrite() noexcept override final { m_pDatabase->OnEndWrite(); }
+    void Commit() final { return m_pDatabase->Commit(); }
+    void Rollback() noexcept final { return m_pDatabase->Rollback(); }
+    void OnInitWrite() noexcept final { m_pDatabase->OnInitWrite(); }
+    void OnEndWrite() noexcept final { m_pDatabase->OnEndWrite(); }
 
 private:
-	static DBEntry<IHeader> ToHeaderEntry(const IHeader::CPtr& pHeader)
-	{
-		return DBEntry<IHeader>(pHeader->GetHash().ToHex(), pHeader);
-	}
+    static DBEntry<IHeader> ToHeaderEntry(const IHeader::CPtr& pHeader)
+    {
+        return DBEntry<IHeader>(pHeader->GetHash().ToHex(), pHeader);
+    }
 
-	static DBEntry<IBlock> ToBlockEntry(const IBlock::CPtr& pBlock)
-	{
-		return DBEntry<IBlock>(pBlock->GetHash().ToHex(), pBlock);
-	}
+    static DBEntry<IBlock> ToBlockEntry(const IBlock::CPtr& pBlock)
+    {
+        return DBEntry<IBlock>(pBlock->GetHash().ToHex(), pBlock);
+    }
 
-	Database::Ptr m_pDatabase;
-	ChainStore::Ptr m_pChainStore;
+    Database::Ptr m_pDatabase;
+    ChainStore::Ptr m_pChainStore;
 };

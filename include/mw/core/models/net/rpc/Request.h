@@ -41,7 +41,7 @@ namespace RPC
             return Request(id, methodOpt.value(), std::move(paramsOpt));
         }
 
-        virtual json ToJSON() const noexcept override final
+        json ToJSON() const noexcept final
         {
             json json({
                 {"id", m_id.ToJSON()},

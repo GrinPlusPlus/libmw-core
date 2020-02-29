@@ -51,7 +51,7 @@ public:
     //
     // Serialization/Deserialization
     //
-    virtual Serializer& Serialize(Serializer& serializer) const noexcept override final
+    Serializer& Serialize(Serializer& serializer) const noexcept final
     {
         return serializer
             .Append<uint64_t>(m_bytes.size())
@@ -69,7 +69,7 @@ public:
         return RangeProof(deserializer.ReadVector(proofSize));
     }
 
-    virtual json ToJSON() const noexcept override final
+    json ToJSON() const noexcept final
     {
         return json(ToHex());
     }
@@ -85,7 +85,7 @@ public:
     //
     // Traits
     //
-    virtual std::string Format() const override final { return HexUtil::ToHex(m_bytes); }
+    std::string Format() const final { return HexUtil::ToHex(m_bytes); }
 
 private:
     // The proof itself, at most 675 bytes long.
