@@ -188,6 +188,11 @@ public:
     static PublicKey AddPublicKeys(const std::vector<PublicKey>& publicKeys);
 
     //
+    // Converts a commitment to a PublicKey.
+    //
+    static PublicKey ToPublicKey(const Commitment& commitment);
+
+    //
     // Hashes the message and signs it using the secret key.
     // If successful, returns a compact Signature.
     //

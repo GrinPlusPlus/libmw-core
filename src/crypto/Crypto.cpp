@@ -18,6 +18,7 @@
 #include "Bulletproofs.h"
 #include "Pedersen.h"
 #include "PublicKeys.h"
+#include "ConversionUtil.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "crypt32")
@@ -321,6 +322,11 @@ PublicKey Crypto::CalculatePublicKey(const SecretKey& privateKey)
 PublicKey Crypto::AddPublicKeys(const std::vector<PublicKey>& publicKeys)
 {
     return PublicKeys(SECP256K1_CONTEXT).PublicKeySum(publicKeys);
+}
+
+PublicKey Crypto::ToPublicKey(const Commitment& commitment)
+{
+    return ConversionUtil(SECP256K1_CONTEXT).ToPublicKey(commitment);
 }
 
 CompactSignature::UPtr Crypto::SignMessage(
