@@ -30,14 +30,14 @@ TEST_CASE("AggSig Interaction")
     );
 
     // Generate partial signatures
-    CompactSignature senderPartialSignature = *Crypto::CalculatePartialSignature(
+    CompactSignature senderPartialSignature = Crypto::CalculatePartialSignature(
         secretKeySender,
         secretNonceSender,
         sumPubKeys,
         sumPubNonces,
         message
     );
-    CompactSignature receiverPartialSignature = *Crypto::CalculatePartialSignature(
+    CompactSignature receiverPartialSignature = Crypto::CalculatePartialSignature(
         secretKeyReceiver,
         secretNonceReceiver,
         sumPubKeys,
@@ -65,7 +65,7 @@ TEST_CASE("AggSig Interaction")
     REQUIRE(receiverSigValid == true);
 
     // Aggregate signature and validate
-    Signature aggregateSignature = *Crypto::AggregateSignatures(
+    Signature aggregateSignature = Crypto::AggregateSignatures(
         std::vector<CompactSignature>({ senderPartialSignature, receiverPartialSignature }),
         sumPubNonces
     );
@@ -83,16 +83,15 @@ TEST_CASE("Message Signature")
     const PublicKey publicKey = Crypto::CalculatePublicKey(secretKey);
     const std::string message = "MESSAGE";
 
-    CompactSignature::UPtr pSignature = Crypto::SignMessage(secretKey, publicKey, message);
-    REQUIRE(pSignature != nullptr);
+    CompactSignature signature = Crypto::SignMessage(secretKey, publicKey, message);
 
-    const bool valid = Crypto::VerifyMessageSignature(*pSignature, publicKey, message);
+    const bool valid = Crypto::VerifyMessageSignature(signature, publicKey, message);
     REQUIRE(valid == true);
 
-    const bool wrongMessage = Crypto::VerifyMessageSignature(*pSignature, publicKey, "WRONG_MESSAGE");
+    const bool wrongMessage = Crypto::VerifyMessageSignature(signature, publicKey, "WRONG_MESSAGE");
     REQUIRE(wrongMessage == false);
 
     const PublicKey publicKey2 = Crypto::CalculatePublicKey(Random::CSPRNG<32>());
-    const bool differentPublicKey = Crypto::VerifyMessageSignature(*pSignature, publicKey2, message);
+    const bool differentPublicKey = Crypto::VerifyMessageSignature(signature, publicKey2, message);
     REQUIRE(differentPublicKey == false);
 }

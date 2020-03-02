@@ -71,8 +71,6 @@ public:
     const Signature& GetSignature() const noexcept { return m_signature; }
     virtual Hash GetSignatureMessage() const = 0;
 
-    virtual void Validate() = 0;
-
     //
     // Serialization/Deserialization
     //

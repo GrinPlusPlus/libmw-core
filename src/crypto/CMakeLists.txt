@@ -3,6 +3,7 @@ set(TARGET_NAME Crypto)
 file(GLOB SOURCE_CODE
 	"AggSig.cpp"
 	"Bulletproofs.cpp"
+	"ConversionUtil.cpp"
 	"Crypto.cpp"
 	"Pedersen.cpp"
 	"PublicKeys.cpp"

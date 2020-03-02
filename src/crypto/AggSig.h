@@ -21,7 +21,7 @@ public:
     //
     // Signs the message hash with the given key.
     //
-    CompactSignature::UPtr SignMessage(
+    CompactSignature SignMessage(
         const SecretKey& secretKey,
         const PublicKey& publicKey,
         const Hash& message
@@ -36,7 +36,7 @@ public:
         const Hash& message
     ) const;
 
-    CompactSignature::UPtr CalculatePartialSignature(
+    CompactSignature CalculatePartialSignature(
         const SecretKey& secretKey,
         const SecretKey& secretNonce,
         const PublicKey& sumPubKeys,
@@ -52,7 +52,7 @@ public:
         const Hash& message
     ) const;
 
-    Signature::UPtr AggregateSignatures(
+    Signature AggregateSignatures(
         const std::vector<CompactSignature>& signatures,
         const PublicKey& sumPubNonces
     ) const;
@@ -70,10 +70,5 @@ public:
     ) const;
 
 private:
-    std::vector<secp256k1_ecdsa_signature> ParseCompactSignatures(
-        const secp256k1_context* pContext,
-        const std::vector<CompactSignature>& signatures
-    ) const;
-
     Locked<Context> m_context;
 };

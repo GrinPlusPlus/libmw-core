@@ -2,54 +2,31 @@
 
 #include "Context.h"
 
-#include <mw/core/exceptions/CryptoException.h>
 #include <mw/core/models/crypto/Commitment.h>
 #include <mw/core/models/crypto/PublicKey.h>
+#include <mw/core/models/crypto/Signature.h>
 
 class ConversionUtil
 {
 public:
     ConversionUtil(const Locked<Context>& context) : m_context(context) { }
 
-    PublicKey ToPublicKey(const Commitment& commitment)
-    {
-        secp256k1_pedersen_commitment parsedCommitment;
-        const int commitmentResult = secp256k1_pedersen_commitment_parse(
-            m_context.Read()->Get(),
-            &parsedCommitment,
-            commitment.data()
-        );
-        if (commitmentResult == 1)
-        {
-            secp256k1_pubkey pubKey;
-            const int pubkeyResult = secp256k1_pedersen_commitment_to_pubkey(
-                m_context.Read()->Get(),
-                &pubKey,
-                &parsedCommitment
-            );
+    PublicKey ToPublicKey(const Commitment& commitment) const;
+    PublicKey ToPublicKey(const secp256k1_pubkey& pubkey) const;
+    Commitment ToCommitment(const secp256k1_pedersen_commitment& commitment) const;
+    CompactSignature ToCompact(const secp256k1_ecdsa_signature& signature) const;
 
-            if (pubkeyResult == 1)
-            {
-                PublicKey result;
-                size_t length = result.size();
-                const int serializeResult = secp256k1_ec_pubkey_serialize(
-                    m_context.Read()->Get(),
-                    result.data(),
-                    &length,
-                    &pubKey,
-                    SECP256K1_EC_COMPRESSED
-                );
-                if (serializeResult == 1)
-                {
-                    return result;
-                }
-            }
+    secp256k1_pubkey ToSecp256k1(const PublicKey& publicKey) const;
+    std::vector<secp256k1_pubkey> ToSecp256k1(const std::vector<PublicKey>& publicKeys) const;
 
-            ThrowCrypto_F("Failed to convert commitment ({}) to pubkey", commitment);
-        }
+    secp256k1_pedersen_commitment ToSecp256k1(const Commitment& commitment) const;
+    std::vector<secp256k1_pedersen_commitment> ToSecp256k1(const std::vector<Commitment>& commitments) const;
 
-        ThrowCrypto_F("Failed to parse commitment: {}", commitment);
-    }
+    secp256k1_ecdsa_signature ToSecp256k1(const CompactSignature& signature) const;
+    std::vector<secp256k1_ecdsa_signature> ToSecp256k1(const std::vector<CompactSignature>& signatures) const;
+
+    secp256k1_schnorrsig ToSecp256k1(const Signature& signature) const;
+    std::vector<secp256k1_schnorrsig> ToSecp256k1(const std::vector<const Signature*>& signatures) const;
 
 private:
     Locked<Context> m_context;

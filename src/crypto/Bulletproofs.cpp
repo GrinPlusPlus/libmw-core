@@ -1,8 +1,9 @@
 #include "Bulletproofs.h"
-#include "CommitmentUtil.h"
+#include "ConversionUtil.h"
 
 #include <mw/core/crypto/Random.h>
 #include <mw/core/exceptions/CryptoException.h>
+#include <mw/core/util/VectorUtil.h>
 
 const uint64_t MAX_WIDTH = 1 << 20;
 const size_t SCRATCH_SPACE_SIZE = 256 * MAX_WIDTH;
@@ -14,6 +15,7 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
     const size_t proofLength = rangeProofs.front().second->size();
 
     std::vector<Commitment> commitments;
+    std::vector<secp256k1_pedersen_commitment> secpCommitments;
     commitments.reserve(rangeProofs.size());
 
     std::vector<const unsigned char*> bulletproofPointers;
@@ -23,6 +25,7 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
         if (!m_cache.WasAlreadyVerified(rangeProof.first))
         {
             commitments.push_back(rangeProof.first);
+            secpCommitments.push_back(ConversionUtil(m_context).ToSecp256k1(rangeProof.first));
             bulletproofPointers.emplace_back(rangeProof.second->data());
         }
     }
@@ -39,10 +42,7 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
         valueGenerators.push_back(secp256k1_generator_const_h);
     }
 
-    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = CommitmentUtil::ConvertCommitments(
-        *m_context.Read()->Get(),
-        commitments
-    );
+    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = VectorUtil::ToPointerVec(secpCommitments);
 
     secp256k1_scratch_space* pScratchSpace = secp256k1_scratch_space_create(
         m_context.Read()->Get(),
@@ -64,8 +64,6 @@ bool Bulletproofs::VerifyBulletproofs(const std::vector<std::pair<Commitment, Ra
         NULL
     );
     secp256k1_scratch_space_destroy(pScratchSpace);
-
-    CommitmentUtil::CleanupCommitments(commitmentPointers);
 
     if (result == 1)
     {
@@ -132,40 +130,34 @@ std::unique_ptr<RewoundProof> Bulletproofs::RewindProof(
     const RangeProof& rangeProof,
     const SecretKey& nonce) const
 {
-    std::vector<secp256k1_pedersen_commitment*> commitmentPointers = CommitmentUtil::ConvertCommitments(
-        *m_context.Read()->Get(),
-        std::vector<Commitment>({ commitment })
+    secp256k1_pedersen_commitment secpCommitment = ConversionUtil(m_context).ToSecp256k1(commitment);
+
+    uint64_t value;
+    SecretKey blindingFactor;
+    std::vector<unsigned char> message(20, 0);
+
+    int result = secp256k1_bulletproof_rangeproof_rewind(
+        m_context.Read()->Get(),
+        &value,
+        blindingFactor.data(),
+        rangeProof.data(),
+        rangeProof.size(),
+        0,
+        &secpCommitment,
+        &secp256k1_generator_const_h,
+        nonce.data(),
+        NULL,
+        0,
+        message.data()
     );
-    if (!commitmentPointers.empty())
+
+    if (result == 1)
     {
-        uint64_t value;
-        SecretKey blindingFactor;
-        std::vector<unsigned char> message(20, 0);
-
-        int result = secp256k1_bulletproof_rangeproof_rewind(
-            m_context.Read()->Get(),
-            &value,
-            blindingFactor.data(),
-            rangeProof.data(),
-            rangeProof.size(),
-            0,
-            commitmentPointers.front(),
-            &secp256k1_generator_const_h,
-            nonce.data(),
-            NULL,
-            0,
-            message.data()
+        return std::make_unique<RewoundProof>(
+            value, 
+            std::make_unique<SecretKey>(std::move(blindingFactor)),
+            ProofMessage(BigInt<20>(std::move(message)))
         );
-        CommitmentUtil::CleanupCommitments(commitmentPointers);
-
-        if (result == 1)
-        {
-            return std::make_unique<RewoundProof>(RewoundProof(
-                value, 
-                std::make_unique<SecretKey>(std::move(blindingFactor)),
-                ProofMessage(BigInt<20>(std::move(message)))
-            ));
-        }
     }
 
     return std::unique_ptr<RewoundProof>(nullptr);

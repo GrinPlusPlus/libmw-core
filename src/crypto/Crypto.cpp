@@ -329,7 +329,7 @@ PublicKey Crypto::ToPublicKey(const Commitment& commitment)
     return ConversionUtil(SECP256K1_CONTEXT).ToPublicKey(commitment);
 }
 
-CompactSignature::UPtr Crypto::SignMessage(
+CompactSignature Crypto::SignMessage(
     const SecretKey& secretKey,
     const PublicKey& publicKey,
     const std::string& message)
@@ -359,7 +359,7 @@ bool Crypto::VerifyMessageSignature(
     );
 }
 
-CompactSignature::UPtr Crypto::CalculatePartialSignature(
+CompactSignature Crypto::CalculatePartialSignature(
     const SecretKey& secretKey,
     const SecretKey& secretNonce,
     const PublicKey& sumPubKeys,
@@ -375,7 +375,7 @@ CompactSignature::UPtr Crypto::CalculatePartialSignature(
     );
 }
 
-Signature::UPtr Crypto::AggregateSignatures(
+Signature Crypto::AggregateSignatures(
     const std::vector<CompactSignature>& signatures,
     const PublicKey& sumPubNonces)
 {

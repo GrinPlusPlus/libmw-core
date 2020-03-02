@@ -15,7 +15,5 @@ public:
     PublicKey PublicKeySum(const std::vector<PublicKey>& publicKeys) const;
 
 private:
-    std::vector<secp256k1_pubkey*> ParsePubKeys(const std::vector<PublicKey>& publicKeys) const;
-
     Locked<Context> m_context;
 };

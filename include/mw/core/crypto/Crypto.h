@@ -196,7 +196,7 @@ public:
     // Hashes the message and signs it using the secret key.
     // If successful, returns a compact Signature.
     //
-    static CompactSignature::UPtr SignMessage(
+    static CompactSignature SignMessage(
         const SecretKey& secretKey,
         const PublicKey& publicKey,
         const std::string& message
@@ -216,7 +216,7 @@ public:
     // Builds one party's share of a Schnorr signature.
     // Returns a CompactSignature if successful.
     //
-    static CompactSignature::UPtr CalculatePartialSignature(
+    static CompactSignature CalculatePartialSignature(
         const SecretKey& secretKey,
         const SecretKey& secretNonce,
         const PublicKey& sumPubKeys,
@@ -240,7 +240,7 @@ public:
     // Combines multiple partial signatures to build the final aggregate signature.
     // Returns the raw aggregate signature.
     //
-    static Signature::UPtr AggregateSignatures(
+    static Signature AggregateSignatures(
         const std::vector<CompactSignature>& signatures,
         const PublicKey& sumPubNonces
     );

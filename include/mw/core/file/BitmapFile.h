@@ -143,7 +143,7 @@ private:
         return 1 << (7 - bit);
     }
 
-    bool IsBitSet(const uint8_t byte, const uint64_t position) const
+    bool IsBitSet(const uint8_t byte, const uint64_t position) const noexcept
     {
         const uint8_t bitPosition = (uint8_t)position % 8;
 
