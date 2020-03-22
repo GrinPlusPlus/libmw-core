@@ -1,7 +1,7 @@
 #pragma once
 
-#include <mw/core/models/net/SocketAddress.h>
 #include <asio.hpp>
+#include <mw/core/models/net/SocketAddress.h>
 #include <functional>
 #include <cassert>
 #include <string>

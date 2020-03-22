@@ -12,13 +12,21 @@ if(NOT MSVC) # TODO: This is for GCC. Need to determine clang flags
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
 endif()
 
+if(MSVC)
+    string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+endif(MSVC)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(WITH_GFLAGS OFF)
 set(MW_STATIC TRUE)
+ set(CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL MinSizeRel Release)
+ set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RelWithDebInfo Release)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Dependencies
+include(deps/vcpkg_deps.cmake)
 include(deps/dependencies.cmake)
 
 include(src/core.cmake)

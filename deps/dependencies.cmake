@@ -1,19 +1,3 @@
-#include(sqlite3)
-#include(minizip)
-#include(jsoncpp)
-#include(zlib)
-#include(rocksdb)
-#include(croaring)
-#include(civetweb)
-#include(uint128)
-#include(ctaes)
-#include(scrypt)
-#include(secp256k1-zkp)
-#include(sha3)
-#add_subdirectory(deps/cuckoo)
-#add_subdirectory(deps/cppcodec)
-#add_subdirectory(deps/ed25519-donna)
-
 if(NOT BUILD_DIR)
     set(BUILD_DIR build)
 endif()
@@ -27,21 +11,8 @@ if(MSVC)
     endif()
 endif()
 
-# spdlog
-if (WIN32)
-    #add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
-endif()
-add_definitions(-DSPDLOG_WCHAR_FILENAMES)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/spdlog/include)
-
-# mio (memmap)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/mio/include)
-
 # caches
 include_directories(${CMAKE_CURRENT_LIST_DIR}/caches/include)
-
-# nlohmann JSON
-include_directories(${CMAKE_CURRENT_LIST_DIR}/nlohmann/include)
 
 # Reproc++
 set(REPROC++ ON)
@@ -51,32 +22,15 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/deps/reproc/reproc++/include
 )
 
-# fmt
-add_definitions(-DUNICODE)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/fmt ${BUILD_DIR}/fmt)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/fmt/include)
-
 # ghc
 include_directories(${CMAKE_CURRENT_LIST_DIR}/ghc/include)
 
 # optional
 include_directories(${CMAKE_CURRENT_LIST_DIR}/optional/include)
 
-# asio
-add_definitions(-DASIO_STANDALONE)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/asio/include)
-
 # crypto
 include_directories(${CMAKE_CURRENT_LIST_DIR}/crypto/include)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/crypto ${BUILD_DIR}/crypto)
-
-# civetweb
-include_directories(${CMAKE_CURRENT_LIST_DIR}/civetweb/include)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/civetweb ${BUILD_DIR}/civetweb)
-
-# leveldb # TODO: Add Snappy dependency
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/leveldb-1.22 ${BUILD_DIR}/leveldb)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/leveldb-1.22/include)
 
 # secp256k1-zkp
 include_directories(${CMAKE_CURRENT_LIST_DIR}/secp256k1-zkp/include)

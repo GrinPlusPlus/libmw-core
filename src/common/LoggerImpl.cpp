@@ -1,6 +1,9 @@
 #include "LoggerImpl.h"
 #include "ThreadManagerImpl.h"
 
+#include <spdlog/async.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+
 #include <mw/core/file/FilePath.h>
 
 Logger& Logger::GetInstance()
@@ -9,14 +12,15 @@ Logger& Logger::GetInstance()
     return instance;
 }
 
+// TODO: Make asynchronous
 void Logger::StartLogger(const FilePath& logDirectory, const spdlog::level::level_enum& logLevel)
 {
     logDirectory.CreateDirIfMissing();
 
     {
         const FilePath logPath = logDirectory.GetChild("Node.log");
-        auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logPath.ToString(), 5 * 1024 * 1024, 10);
-        m_pNodeLogger = spdlog::create_async("NODE", sink, 32768, spdlog::async_overflow_policy::block_retry, nullptr, std::chrono::seconds(5));
+        m_pNodeLogger = spdlog::rotating_logger_mt("NODE", logPath.ToString(), 5 * 1024 * 1024, 10);
+        //m_pNodeLogger = spdlog::create_async<spdlog::sinks::rotating_file_sink_mt>("NODE", sink, 32768, spdlog::async_overflow_policy::block, nullptr, std::chrono::seconds(5));
         spdlog::set_pattern("[%D %X.%e%z] [%l] %v");
         if (m_pNodeLogger != nullptr)
         {
@@ -25,8 +29,9 @@ void Logger::StartLogger(const FilePath& logDirectory, const spdlog::level::leve
     }
     {
         const FilePath logPath = logDirectory.GetChild("Wallet.log");
-        auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logPath.ToString(), 5 * 1024 * 1024, 10);
-        m_pWalletLogger = spdlog::create_async("WALLET", sink, 8192, spdlog::async_overflow_policy::block_retry, nullptr, std::chrono::seconds(5));
+        m_pWalletLogger = spdlog::rotating_logger_mt("WALLET", logPath.ToString(), 5 * 1024 * 1024, 10);
+        //auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logPath.ToString(), 5 * 1024 * 1024, 10);
+        //m_pWalletLogger = spdlog::create_async("WALLET", sink, 8192, spdlog::async_overflow_policy::block, nullptr, std::chrono::seconds(5));
         spdlog::set_pattern("[%D %X.%e%z] [%l] %v");
         if (m_pWalletLogger != nullptr)
         {

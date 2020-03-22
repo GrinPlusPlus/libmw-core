@@ -6,7 +6,7 @@
 #include <mw/core/common/Lock.h>
 #include <mw/core/file/FilePath.h>
 
-// TODO: GetHeaderByHeight, GetHeaderByHeightRange, GetBlockByHeight, GetBlockByHeightRange, GetBlockByCommitment(if indexed)
+// TODO: GetHeaderByHeight, GetHeaderByHeightRange, GetBlockByHeightRange, GetBlockByCommitment(if indexed)
 class IBlockDB : public Traits::IBatchable
 {
 public:

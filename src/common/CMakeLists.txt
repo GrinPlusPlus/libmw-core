@@ -14,5 +14,5 @@ endif(MW_STATIC)
 add_library(Core::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 target_compile_definitions(${TARGET_NAME} PRIVATE MW_COMMON)
-add_dependencies(${TARGET_NAME} fmt)
-target_link_libraries(${TARGET_NAME} PUBLIC fmt)
+add_dependencies(${TARGET_NAME} fmt::fmt spdlog::spdlog_header_only)
+target_link_libraries(${TARGET_NAME} PUBLIC fmt::fmt spdlog::spdlog_header_only)

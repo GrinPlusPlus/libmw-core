@@ -14,5 +14,5 @@ add_library(Core::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 target_compile_definitions(${TARGET_NAME} PRIVATE MW_DATABASE)
 
-add_dependencies(${TARGET_NAME} leveldb Core::Common Core::Traits Core::Crypto)
-target_link_libraries(${TARGET_NAME} PUBLIC leveldb Core::Common Core::Traits Core::Crypto)
+add_dependencies(${TARGET_NAME} leveldb::leveldb Core::Common Core::Traits Core::Crypto)
+target_link_libraries(${TARGET_NAME} PUBLIC leveldb::leveldb Core::Common Core::Traits Core::Crypto)

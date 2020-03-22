@@ -37,6 +37,8 @@ public:
     Output(Output&& Output) noexcept = default;
     Output() = default;
 
+    static inline size_t SIZE = 41;
+
     //
     // Destructor
     //
