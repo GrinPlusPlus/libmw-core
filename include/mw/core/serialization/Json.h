@@ -103,9 +103,9 @@ public:
     }
 
     template<class T>
-    T GetOr(const std::string& key, const T& default) const
+    T GetOr(const std::string& key, const T& defaultValue) const
     {
-        return Get<T>(key).value_or(default);
+        return Get<T>(key).value_or(defaultValue);
     }
 
     template<class T>
