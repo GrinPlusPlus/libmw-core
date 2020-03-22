@@ -2,7 +2,6 @@
 #include <mw/core/common/Logger.h>
 
 #if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #else
 #include <unistd.h>
@@ -10,7 +9,9 @@
 
 void File::Create()
 {
-    std::ifstream inFile(m_path.c_str(), std::ios::in | std::ifstream::ate | std::ifstream::binary);
+    m_path.GetParent().CreateDirIfMissing();
+
+    std::ifstream inFile(m_path.m_path, std::ios::in | std::ifstream::ate | std::ifstream::binary);
     if (inFile.is_open())
     {
         inFile.close();
@@ -18,12 +19,11 @@ void File::Create()
     else
     {
         LOG_INFO_F("File {} does not exist. Creating it now.", m_path);
-        std::ofstream outFile(m_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+        std::ofstream outFile(m_path.m_path, std::ios::out | std::ios::binary | std::ios::trunc);
         if (!outFile.is_open())
         {
             ThrowFile_F("Failed to create file: {}", m_path);
         }
-
         outFile.close();
     }
 }
@@ -34,7 +34,7 @@ void File::Truncate(const uint64_t size)
 
 #if defined(WIN32)
     HANDLE hFile = CreateFile(
-        m_path.c_str(),
+        m_path.ToString().c_str(),
         GENERIC_WRITE,
         FILE_SHARE_READ,
         NULL,
@@ -114,7 +114,7 @@ std::vector<uint8_t> File::ReadBytes() const
 
 void File::Write(const std::vector<uint8_t>& bytes)
 {
-    std::ofstream file(m_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+    std::ofstream file(m_path.m_path, std::ios::out | std::ios::binary | std::ios::app);
     if (!file.is_open())
     {
         ThrowFile_F("Failed to write to file: {}", m_path);
@@ -124,9 +124,30 @@ void File::Write(const std::vector<uint8_t>& bytes)
     file.close();
 }
 
+void File::Write(const size_t startIndex, const std::vector<uint8_t>& bytes, const bool truncate)
+{
+    if (!bytes.empty())
+    {
+        std::ofstream file(m_path.m_path, std::ios::out | std::ios::binary | std::ios::app);
+        if (!file.is_open())
+        {
+            ThrowFile_F("Failed to write to file: {}", m_path);
+        }
+
+        file.seekp(startIndex, std::ios::beg);
+        file.write((const char*)bytes.data(), bytes.size());
+        file.close();
+    }
+
+    if (truncate)
+    {
+        Truncate(startIndex + bytes.size());
+    }
+}
+
 void File::WriteBytes(const std::map<uint64_t, uint8_t>& bytes)
 {
-    std::ofstream file(m_path.c_str(), std::ios_base::binary | std::ios_base::out | std::ios_base::in);
+    std::ofstream file(m_path.m_path, std::ios_base::binary | std::ios_base::out | std::ios_base::in);
 
     for (auto iter : bytes)
     {

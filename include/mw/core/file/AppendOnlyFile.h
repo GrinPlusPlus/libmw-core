@@ -1,7 +1,7 @@
 #pragma once
 
+#include <mw/core/file/File.h>
 #include <mw/core/file/FilePath.h>
-#include <mw/core/file/FileHelper.h>
 #include <mw/core/file/MemMap.h>
 #include <mw/core/common/Logger.h>
 #include <mw/core/traits/Batchable.h>
@@ -11,14 +11,24 @@ class AppendOnlyFile : public Traits::IBatchable
 public:
     using Ptr = std::shared_ptr<AppendOnlyFile>;
 
+    AppendOnlyFile(const File& file, const size_t fileSize) noexcept
+        : m_file(file),
+        m_mmap(file.GetPath()),
+        m_fileSize(fileSize),
+        m_bufferIndex(fileSize)
+    {
+
+    }
     virtual ~AppendOnlyFile() = default;
 
     static AppendOnlyFile::Ptr Load(const FilePath& path)
     {
-        FileHelper(path).CreateFileIfMissing();
-        const size_t fileSize = FileHelper(path).GetFileSize();
+        File file(path);
+        file.Create();
 
-        return std::make_shared<AppendOnlyFile>(path, fileSize);
+        auto pAppendOnlyFile = std::make_shared<AppendOnlyFile>(file, file.GetSize());
+        pAppendOnlyFile->m_mmap.Map();
+        return pAppendOnlyFile;
     }
 
     void Commit() final
@@ -30,45 +40,20 @@ public:
 
         if (m_fileSize < m_bufferIndex)
         {
-            ThrowFile_F("Buffer index is past the end of {}", m_path);
+            ThrowFile_F("Buffer index is past the end of {}", m_file);
         }
 
         m_mmap.Unmap();
 
-        if (m_fileSize > m_bufferIndex)
-        {
-            FileHelper(m_path).Truncate(m_bufferIndex);
-        }
-
-        if (!m_buffer.empty())
-        {
-            std::ofstream file(m_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
-            if (!file.is_open())
-            {
-                ThrowFile_F("Failed to open {} for writing", m_path);
-            }
-
-            file.seekp(m_bufferIndex, std::ios::beg);
-
-            if (!m_buffer.empty())
-            {
-                file.write((const char*)& m_buffer[0], m_buffer.size());
-            }
-
-            file.close();
-        }
-
-        m_fileSize = m_bufferIndex + m_buffer.size();
-
+        m_file.Write(m_bufferIndex, m_buffer, true);
+        m_fileSize = m_file.GetSize();
         m_bufferIndex = m_fileSize;
         m_buffer.clear();
 
         m_mmap.Map();
-
-        return true;
     }
 
-    void Rollback() final
+    void Rollback() noexcept final
     {
         m_bufferIndex = m_fileSize;
         m_buffer.clear();
@@ -81,11 +66,11 @@ public:
 
     void Rewind(const uint64_t nextPosition)
     {
-        // TODO: Should we commit first? Fail if already rewound without committing?
+        assert(m_fileSize == m_bufferIndex);
 
         if (nextPosition > (m_bufferIndex + m_buffer.size()))
         {
-            ThrowFile_F("Tried to rewind past end of {}", m_path);
+            ThrowFile_F("Tried to rewind past end of {}", m_file);
         }
 
         if (nextPosition <= m_bufferIndex)
@@ -108,7 +93,7 @@ public:
     {
         if ((position + numBytes) > (m_bufferIndex + m_buffer.size()))
         {
-            ThrowFile_F("Tried to read past end of {}", m_path);
+            ThrowFile_F("Tried to read past end of {}", m_file);
         }
 
         if (position < m_bufferIndex)
@@ -125,16 +110,7 @@ public:
     }
 
 private:
-    AppendOnlyFile(const FilePath& path, const size_t fileSize)
-        : m_path(path),
-        m_mmap(path),
-        m_fileSize(fileSize),
-        m_bufferIndex(fileSize)
-    {
-        m_mmap.Map();
-    }
-
-    FilePath m_path;
+    File m_file;
     MemMap m_mmap;
     uint64_t m_fileSize;
 

@@ -18,6 +18,11 @@ public:
     void Rename(const std::string& filename);
     std::vector<uint8_t> ReadBytes() const;
     void Write(const std::vector<uint8_t>& bytes);
+    void Write(
+        const size_t startIndex,
+        const std::vector<uint8_t>& bytes,
+        const bool truncate
+    );
     void WriteBytes(const std::map<uint64_t, uint8_t>& bytes);
     size_t GetSize() const;
 

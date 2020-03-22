@@ -27,7 +27,7 @@ public:
     //
     // Constructors
     //
-    BigInt() : m_bytes(NUM_BYTES) { }
+    BigInt() noexcept : m_bytes(NUM_BYTES) { }
     BigInt(const std::vector<uint8_t, ALLOC>& bytes) : m_bytes(bytes) { assert(bytes.size() == NUM_BYTES); }
     BigInt(std::vector<uint8_t, ALLOC>&& bytes) : m_bytes(std::move(bytes)) { assert(bytes.size() == NUM_BYTES); }
     explicit BigInt(const uint8_t* arr) : m_bytes(arr, arr + NUM_BYTES) { }

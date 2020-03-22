@@ -15,6 +15,7 @@ namespace mmr
 class Index
 {
 public:
+    Index() noexcept = default;
     Index(const uint64_t position, const uint64_t height) noexcept
         : m_position(position), m_height(height) { }
     static Index At(const uint64_t position) noexcept;

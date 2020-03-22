@@ -135,7 +135,6 @@ public:
 #endif
 
     std::string u8string() const { return m_path.u8string(); }
-    const auto* c_str() const { return ToString().c_str(); }
 
     //
     // Traits

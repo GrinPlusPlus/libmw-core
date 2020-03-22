@@ -5,7 +5,7 @@
 #pragma warning(disable:4267)
 #pragma warning(disable:4334)
 #pragma warning(disable:4018)
-#include <mio/mio.hpp>
+#include <mio/mmap.hpp>
 #pragma warning(pop)
 
 #include <mw/core/file/File.h>
@@ -14,8 +14,8 @@
 class MemMap
 {
 public:
-    MemMap(const File& file) : m_file(file), m_mapped(false) { }
-    MemMap(File&& file) : m_file(std::move(file)), m_mapped(false) { }
+    MemMap(const File& file) noexcept : m_file(file), m_mapped(false) { }
+    MemMap(File&& file) noexcept : m_file(std::move(file)), m_mapped(false) { }
 
     void Map()
     {

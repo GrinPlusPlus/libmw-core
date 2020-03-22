@@ -11,6 +11,7 @@ namespace mmr
 class LeafIndex
 {
 public:
+    LeafIndex() noexcept = default;
     LeafIndex(const uint64_t leafIndex, const uint64_t position)
         : m_leafIndex(leafIndex), m_nodeIndex(position, 0) { }
     virtual ~LeafIndex() = default;

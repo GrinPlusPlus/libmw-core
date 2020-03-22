@@ -13,6 +13,7 @@ class HASH
 {
 public:
     static inline const Hash ZERO = Hash::ValueOf(0);
+    static inline const uint8_t LENGTH = 32;
 };
 
 #define ZERO_HASH HASH::ZERO
