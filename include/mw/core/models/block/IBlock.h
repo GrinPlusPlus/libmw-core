@@ -52,7 +52,6 @@ public:
     const std::vector<IKernel::CPtr>& GetKernels() const noexcept { return m_body.GetKernels(); }
 
     uint64_t GetHeight() const noexcept { return m_pHeader->GetHeight(); }
-    const Hash& GetPreviousHash() const noexcept { return m_pHeader->GetPreviousHash(); }
     const BlindingFactor& GetOffset() const noexcept { return m_pHeader->GetOffset(); }
 
     //

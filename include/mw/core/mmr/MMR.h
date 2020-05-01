@@ -5,9 +5,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <mw/core/models/crypto/Hash.h>
-#include <mw/core/util/BitUtil.h>
 #include <mw/core/traits/Batchable.h>
-#include <mw/core/file/FilePath.h>
 #include <mw/core/mmr/Backend.h>
 #include <mw/core/mmr/LeafIndex.h>
 #include <mw/core/mmr/Leaf.h>

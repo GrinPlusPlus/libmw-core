@@ -13,6 +13,7 @@
 namespace mmr
 {
 // TODO: Add pruning support
+// TODO: Just use pmmr_hash, and rely on database for storing the data
 class FileBackend : public IBackend
 {
     struct PosEntry

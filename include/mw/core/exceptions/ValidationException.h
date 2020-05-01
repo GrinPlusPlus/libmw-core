@@ -11,7 +11,9 @@ enum class EConsensusError
     BLOCK_WEIGHT,
     KERNEL_SUMS,
     KERNEL_SIG,
-    BULLETPROOF
+    BULLETPROOF,
+    PEGIN_MISMATCH,
+    PEGOUT_MISMATCH
 };
 
 class ValidationException : public GrinException
@@ -43,6 +45,10 @@ private:
                 return "KERNEL_SIG";
             case EConsensusError::BULLETPROOF:
                 return "BULLETPROOF";
+            case EConsensusError::PEGIN_MISMATCH:
+                return "PEGIN_MISMATCH";
+            case EConsensusError::PEGOUT_MISMATCH:
+                return "PEGOUT_MISMATCH";
         }
 
         return "UNKNOWN";

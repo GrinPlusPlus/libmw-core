@@ -163,6 +163,6 @@ private:
     // List of outputs the transaction produces.
     std::vector<Output> m_outputs;
 
-    // List of kernels that make up this transaction (usually a single kernel).
+    // List of kernels that make up this transaction.
     std::vector<IKernel::CPtr> m_kernels;
 };

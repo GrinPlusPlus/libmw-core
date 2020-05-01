@@ -27,6 +27,7 @@ int main(int, char*[])
     RunTest("Common");
     RunTest("Crypto");
     RunTest("File");
+    RunTest("MMR");
     RunTest("Models");
     RunTest("Net");
     RunTest("Serialization");

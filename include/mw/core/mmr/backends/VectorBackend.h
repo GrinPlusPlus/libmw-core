@@ -37,15 +37,6 @@ public:
     void AddHash(const Hash& hash) final { m_nodes.push_back(hash); }
     void Rewind(const LeafIndex& nextLeafIndex) final
     {
-        //for (auto iter = m_leaves.crbegin(); iter != m_leaves.crend(); iter++)
-        //{
-        //    if (m_leaves.size() <= nextLeafIndex.GetLeafIndex())
-        //    {
-        //        break;
-        //    }
-
-        //    m_leaves.erase((iter + 1).base());
-        //}
         m_leaves.resize(nextLeafIndex.GetLeafIndex());
         m_nodes.resize(nextLeafIndex.GetPosition());
     }

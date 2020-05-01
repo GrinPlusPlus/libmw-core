@@ -31,7 +31,6 @@ public:
     //
     IHeader(
         const uint64_t height,
-        Hash&& previousHash,
         Hash&& outputRoot,
         Hash&& rangeProofRoot,
         Hash&& kernelRoot,
@@ -40,7 +39,6 @@ public:
         const uint64_t kernelMMRSize
     )
         : m_height(height),
-        m_previousHash(std::move(previousHash)),
         m_outputRoot(std::move(outputRoot)),
         m_rangeProofRoot(std::move(rangeProofRoot)),
         m_kernelRoot(std::move(kernelRoot)),
@@ -65,7 +63,6 @@ public:
     // Getters
     //
     uint64_t GetHeight() const noexcept { return m_height; }
-    const Hash& GetPreviousHash() const noexcept { return m_previousHash; }
     const Hash& GetOutputRoot() const noexcept { return m_outputRoot; }
     const Hash& GetRangeProofRoot() const noexcept { return m_rangeProofRoot; }
     const Hash& GetKernelRoot() const noexcept { return m_kernelRoot; }
@@ -74,7 +71,7 @@ public:
     uint64_t GetKernelMMRSize() const noexcept { return m_kernelMMRSize; }
 
     //
-    // Validation
+    // Context-free validation of the header.
     //
     virtual void Validate(const Context& context) const = 0;
 
@@ -108,7 +105,6 @@ public:
 protected:
     mutable tl::optional<Hash> m_hash;
     uint64_t m_height;
-    Hash m_previousHash;
     Hash m_outputRoot;
     Hash m_rangeProofRoot;
     Hash m_kernelRoot;
