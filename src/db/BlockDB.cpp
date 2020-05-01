@@ -2,8 +2,9 @@
 
 #include <mw/core/common/Logger.h>
 
-static const DBTable HEADER_TABLE = { "H" };
-static const DBTable BLOCK_TABLE = { "B" };
+static const DBTable HEADER_TABLE = { 'H' };
+static const DBTable BLOCK_TABLE = { 'B' };
+static const DBTable UTXO_TABLE = { 'U', DBTable::Options({ true /* allowDuplicates */ }) };
 
 Locked<IBlockDB> BlockDBFactory::Open(const Context::CPtr& pContext, const FilePath& chainPath)
 {
@@ -118,4 +119,42 @@ void BlockDB::AddBlock(const IBlock::CPtr& pBlock)
 
     std::vector<DBEntry<IBlock>> entries({ BlockDB::ToBlockEntry(pBlock) });
     m_pDatabase->Put<IBlock>(BLOCK_TABLE, entries);
+}
+
+void BlockDB::RemoveOldBlocks(const uint64_t height)
+{
+    LOG_TRACE_F("Removing blocks before height {}", height);
+
+    // TODO: Implement
+}
+
+std::unordered_map<Commitment, UTXO::CPtr> BlockDB::GetUTXOs(const std::vector<Commitment>& commitments) const noexcept
+{
+    std::unordered_map<Commitment, UTXO::CPtr> utxos;
+
+    for (const Commitment& commitment : commitments)
+    {
+        auto pUTXO = m_pDatabase->Get<UTXO>(UTXO_TABLE, commitment.ToHex());
+        if (pUTXO != nullptr)
+        {
+            utxos.insert({ commitment, pUTXO->item });
+        }
+    }
+
+    return utxos;
+}
+
+void BlockDB::AddUTXOs(const std::vector<UTXO::CPtr>& utxos)
+{
+    // TODO: Implement
+}
+
+void BlockDB::RemoveUTXOs(const std::vector<Commitment>& commitment)
+{
+    // TODO: Implement
+}
+
+void BlockDB::RemoveAllUTXOs()
+{
+    // TODO: Implement
 }
