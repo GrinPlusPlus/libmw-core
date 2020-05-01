@@ -2,6 +2,7 @@ set(TARGET_NAME crypto_deps)
 
 set(CRYPTO_SOURCES
     src/aes.cpp
+    src/bech32.cpp
     src/blake2b.cpp
     src/hmac_sha256.cpp
     src/hmac_sha512.cpp

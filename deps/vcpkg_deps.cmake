@@ -32,6 +32,7 @@ find_package(asio CONFIG REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
 #target_link_libraries(main PRIVATE Catch2::Catch2)
 
+find_package(Boost REQUIRED)
 
 if (MSVC)
     # VCPKG directories on Windows
