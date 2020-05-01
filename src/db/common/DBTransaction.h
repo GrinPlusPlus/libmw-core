@@ -2,6 +2,7 @@
 
 #include "DBTable.h"
 #include "DBEntry.h"
+#include "OrderedMultimap.h"
 
 #include <mw/core/exceptions/DatabaseException.h>
 #include <mw/core/serialization/Serializer.h>
@@ -42,13 +43,13 @@ public:
         typename SFINAE = typename std::enable_if_t<std::is_base_of_v<Traits::ISerializable, T>>>
     std::unique_ptr<DBEntry<T>> Get(const Context::CPtr& pContext, const DBTable& table, const std::string& key) const noexcept
     {
-        auto iter = m_added.find(table.BuildKey(key));
-        if (iter != m_added.cend())
+        auto iter = m_added.find_last(table.BuildKey(key));
+        if (iter != nullptr)
         {
-            auto pObject = std::dynamic_pointer_cast<const T>(iter->second);
+            auto pObject = std::dynamic_pointer_cast<const T>(iter);
             if (pObject != nullptr)
             {
-                return std::make_unique<DBEntry<T>>(iter->first, pObject);
+                return std::make_unique<DBEntry<T>>(key, pObject);
             }
         }
 
@@ -63,6 +64,12 @@ public:
         return nullptr;
     }
 
+    void Delete(const Context::CPtr& pContext, const DBTable& table, const std::string& key)
+    {
+        m_batch.Delete(leveldb::Slice(table.BuildKey(key)));
+        m_added.erase(table.BuildKey(key));
+    }
+
     void Commit()
     {
         leveldb::Status status = m_pDB->Write(leveldb::WriteOptions(), &m_batch);
@@ -75,5 +82,6 @@ public:
 private:
     leveldb::DB* m_pDB;
     leveldb::WriteBatch m_batch;
-    std::unordered_map<std::string, std::shared_ptr<const Traits::ISerializable>> m_added;
+    OrderedMultimap<std::string, Traits::ISerializable> m_added;
+    //std::unordered_map<std::string, std::shared_ptr<const Traits::ISerializable>> m_added;
 };

@@ -4,6 +4,7 @@
 #include "DBTransaction.h"
 #include "DBEntry.h"
 #include "DBLogger.h"
+#include "DBFilterPolicy.h"
 
 #include <mw/core/Context.h>
 #include <mw/core/file/FilePath.h>
@@ -23,14 +24,14 @@ public:
 
     static Database::Ptr Open(const Context::CPtr& pContext, const FilePath& path)
     {
-        path.GetParent().CreateDirIfMissing();
+        path.CreateDirIfMissing();
 
         std::unique_ptr<DBLogger> pLogger = std::make_unique<DBLogger>();
 
         leveldb::Options options;
         options.create_if_missing = true;
         options.info_log = new DBLogger();
-        options.filter_policy = leveldb::NewBloomFilterPolicy(10); // TODO: Determine optimal size
+        options.filter_policy = new DBFilterPolicy();
 
         // Snappy compression is fast, but not useful for pseudorandom data like hashes & commitments.
         options.compression = leveldb::kNoCompression;
